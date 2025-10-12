@@ -6,7 +6,7 @@ import Hero from './components/Hero';
 import About from './components/About';
 import Experience from './components/Experience';
 import Skills from './components/Skills';
-import Projects from './components/Projects';
+import VoluntaryActivities from './components/VoluntaryActivities'; 
 import Contact from './components/Contact';
 
 function App() {
@@ -19,7 +19,7 @@ function App() {
         <About />
         <Experience />
         <Skills />
-        <Projects />
+        <VoluntaryActivities /> {/* Updated component */}
         <Contact />
       </main>
     </div>
