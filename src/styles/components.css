@@ -468,6 +468,13 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+.timeline-content p {
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+  white-space: pre-line; /* This will make newlines work */
+}
+
 .experience-timeline {
   position: relative;
   max-width: 800px;
@@ -990,3 +997,4 @@ section {
     padding: 2rem 0 !important;
   }
 }
+
