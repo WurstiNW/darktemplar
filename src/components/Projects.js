@@ -1,46 +1,43 @@
 import React from 'react';
 import { cvData } from '../data/cvData';
-import { FaGithub, FaExternalLinkAlt } from 'react-icons/fa';
+import { FaCalendar, FaExternalLinkAlt, FaHandsHelping } from 'react-icons/fa';
 
-const Projects = () => {
+const VoluntaryActivities = () => {
   return (
-    <section id="projects" className="projects-section">
+    <section id="voluntary" className="voluntary-section">
       <div className="container">
-        <h2>Featured Projects</h2>
-        <div className="projects-grid">
-          {cvData.projects.map((project) => (
-            <div key={project.id} className="project-card">
-              <div className="project-header">
-                <h3>{project.name}</h3>
-                <a 
-                  href={project.link} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="project-link"
-                >
-                  <FaGithub />
-                </a>
+        <h2><FaHandsHelping className="section-icon" /> Voluntary & Honorary Activities</h2>
+        <div className="activities-grid">
+          {cvData.voluntaryActivities.map((activity) => (
+            <div key={activity.id} className="activity-card">
+              <div className="activity-header">
+                <div className="activity-title">
+                  <h3>{activity.role}</h3>
+                  <h4>{activity.organization}</h4>
+                </div>
+                <div className="activity-period">
+                  <FaCalendar className="period-icon" />
+                  <span>{activity.period}</span>
+                </div>
               </div>
-              <p className="project-description">{project.description}</p>
-              <div className="project-technologies">
-                {project.technologies.map((tech, index) => (
+              <p className="activity-description">{activity.description}</p>
+              <div className="activity-technologies">
+                {activity.technologies.map((tech, index) => (
                   <span key={index} className="tech-tag">{tech}</span>
                 ))}
               </div>
-              <div className="project-actions">
-                <a 
-                  href={project.link} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="btn btn-outline"
-                >
-                  <FaGithub className="btn-icon" />
-                  View Code
-                </a>
-                <button className="btn btn-secondary">
-                  <FaExternalLinkAlt className="btn-icon" />
-                  Live Demo
-                </button>
+              <div className="activity-actions">
+                {activity.link && (
+                  <a 
+                    href={activity.link} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="btn btn-outline"
+                  >
+                    <FaExternalLinkAlt className="btn-icon" />
+                    Learn More
+                  </a>
+                )}
               </div>
             </div>
           ))}
@@ -50,4 +47,4 @@ const Projects = () => {
   );
 };
 
-export default Projects;
+export default VoluntaryActivities;
