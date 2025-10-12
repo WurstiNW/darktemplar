@@ -29,8 +29,8 @@ const Skills = () => {
     return '#ef4444'; // Red
   };
 
-  // Check if category should show skill level and percentage
-  const shouldShowSkillLevel = (category) => {
+  // Check if category should show percentage text
+  const shouldShowPercentageText = (category) => {
     return category === 'Languages' || category === 'IT';
   };
 
@@ -53,7 +53,7 @@ const Skills = () => {
                     <div className="skill-header">
                       <span className="skill-name">{skill.name}</span>
                       <div className="skill-info">
-                        {shouldShowSkillLevel(category) ? (
+                        {shouldShowPercentageText(category) ? (
                           <>
                             <span 
                               className="skill-level"
@@ -64,22 +64,25 @@ const Skills = () => {
                             <span className="skill-percentage">{skill.percentage}%</span>
                           </>
                         ) : (
-                          // Empty div to maintain layout, but show nothing for Hobbies/Strengths
-                          <div></div>
+                          // Show only skill level without percentage text for Hobbies/Strengths
+                          <span 
+                            className="skill-level"
+                            style={{ color: getLevelColor(skill.percentage) }}
+                          >
+                            {getSkillLevel(skill.percentage)}
+                          </span>
                         )}
                       </div>
                     </div>
-                    {shouldShowSkillLevel(category) && (
-                      <div className="skill-bar">
-                        <div 
-                          className="skill-progress"
-                          style={{
-                            width: `${skill.percentage}%`,
-                            backgroundColor: getLevelColor(skill.percentage)
-                          }}
-                        ></div>
-                      </div>
-                    )}
+                    <div className="skill-bar">
+                      <div 
+                        className="skill-progress"
+                        style={{
+                          width: `${skill.percentage}%`,
+                          backgroundColor: getLevelColor(skill.percentage)
+                        }}
+                      ></div>
+                    </div>
                   </div>
                 ))}
               </div>
