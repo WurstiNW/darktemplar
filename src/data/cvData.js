@@ -50,39 +50,21 @@ export const cvData = {
     }
   ],
   skills: {
-    "Frontend": [
-      { name: "React", percentage: 90 },
-      { name: "Vue.js", percentage: 85 },
-      { name: "TypeScript", percentage: 80 },
-      { name: "Next.js", percentage: 75 },
-      { name: "Tailwind CSS", percentage: 95 }
+    "Sprachen": [
+      { name: "Deutsch", percentage: 100 },
+      { name: "Englisch", percentage: 80 }
     ],
-    "Backend": [
-      { name: "Node.js", percentage: 88 },
-      { name: "Python", percentage: 82 },
-      { name: "PHP", percentage: 78 },
-      { name: "Express.js", percentage: 85 },
-      { name: "FastAPI", percentage: 70 }
+    "IT": [      
+      { name: "HTML", percentage: 50 },
+      { name: "Java", percentage: 50 },
+      { name: "MS-Office", percentage: 90 },
+      { name: "MySQL", percentage: 50 }
     ],
-    "Database": [
-      { name: "MongoDB", percentage: 85 },
-      { name: "PostgreSQL", percentage: 80 },
-      { name: "MySQL", percentage: 83 },
-      { name: "Redis", percentage: 75 }
-    ],
-    "DevOps": [
-      { name: "AWS", percentage: 78 },
-      { name: "Docker", percentage: 82 },
-      { name: "Kubernetes", percentage: 65 },
-      { name: "CI/CD", percentage: 80 },
-      { name: "Git", percentage: 95 }
-    ],
-    "Tools": [
-      { name: "Git", percentage: 95 },
-      { name: "Webpack", percentage: 72 },
-      { name: "Jest", percentage: 78 },
-      { name: "Figma", percentage: 68 },
-      { name: "Jira", percentage: 85 }
+    "Stärken": [
+      { name: "Ergebnisorientiert", percentage: 100 },
+      { name: "Flexibel", percentage: 100 },
+      { name: "Lernbereitschaft", percentage: 100 },
+      { name: "Motivation", percentage: 100 }
     ]
   },
   // Helper function to get skills as simple array for other components
@@ -142,17 +124,33 @@ export const cvData = {
   ],
   education: [
     {
-      degree: "Master of Computer Science",
-      institution: "Stanford University",
-      year: "2015"
+      degree: "BA Management & Entrepreneurship (5. Semester)",
+      institution: "FH Wien der WK Wien",
+      year: "seit 09.2023"
     },
     {
-      degree: "Bachelor of Software Engineering",
-      institution: "UC Berkeley",
-      year: "2013"
+      degree: "Worex (Wohnraum-Experte) - Verkaufsausbilding",
+      institution: "Mömax interne Ausbildung",
+      year: "04.2022 - 09.2022"
+    },
+    {
+      degree: "Meisterprüfung zum Versicherungsagenten (Versicherungen und Unternehmensrecht)",
+      institution: "WKO Niederösterreich",
+      year: "11.2019"
+    },
+    {
+      degree: "Meisterprüfung zum gewerblichen Vermögensberater",
+      institution: "WKO Steiermark",
+      year: "04.2019"
+    },
+    {
+      degree: "AHS-Matura (mündl. GPB, GWK und Chemie)",
+      institution: "BG, BRG, BORG Ella Lingens",
+      year: "06.2017"
     }
   ]
 };
+
 
 
 
