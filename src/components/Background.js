@@ -11,10 +11,10 @@ const Background = () => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     
-    // Set canvas size
+    // Set canvas size to cover entire viewport
     const resizeCanvas = () => {
       canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight * 3; 
+      canvas.height = window.innerHeight;
     };
     
     resizeCanvas();
@@ -58,20 +58,8 @@ const Background = () => {
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
-      // Create gradient background
-      const gradient = ctx.createRadialGradient(
-        canvas.width / 2,
-        canvas.height / 2,
-        0,
-        canvas.width / 2,
-        canvas.height / 2,
-        Math.max(canvas.width, canvas.height) / 2
-      );
-      gradient.addColorStop(0, 'rgba(10, 15, 40, 0.95)'); // Darker for better contrast
-      gradient.addColorStop(0.5, 'rgba(20, 25, 60, 0.9)');
-      gradient.addColorStop(1, 'rgba(30, 35, 80, 0.85)');
-      
-      ctx.fillStyle = gradient;
+      // Create solid dark background (no white space)
+      ctx.fillStyle = 'rgba(10, 15, 40, 1)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // Update and draw particles
@@ -205,21 +193,12 @@ const Background = () => {
 
     animate();
 
-    // Scroll parallax effect - make it more subtle
-    const handleScroll = () => {
-      const scrolled = window.pageYOffset;
-      const parallaxSpeed = 0.2; // Slower for better effect
-      if (canvasRef.current) {
-        canvasRef.current.style.transform = `translateY(${scrolled * parallaxSpeed}px) scale(1.05)`;
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    // Remove scroll parallax effect since it's causing issues
+    // The background is fixed and covers entire viewport
 
     return () => {
       window.removeEventListener('resize', resizeCanvas);
       window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('scroll', handleScroll);
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }
@@ -238,4 +217,3 @@ const Background = () => {
 };
 
 export default Background;
-
