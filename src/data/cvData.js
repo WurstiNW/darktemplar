@@ -17,7 +17,8 @@ export const cvData = {
       description: `• Internationale Markenentwicklung am österreichischen Markt (z.B.: Rummo, Kikkoman)
       • Laufende Weiterentwicklung der Kundenverkaufskanäle (Promotionen, PoS Platzierung)
       • Kommunikation, Reporting und Budgetverhandlungen mit Lieferanten
-      • Leitung von diversen (internen)-Projekten (Distributorenmeetings, IT-Infrastruktur, CRM, Zeiterfassung, Office 365)`
+      • Leitung von diversen (internen)-Projekten (Distributorenmeetings, IT-Infrastruktur, CRM, Zeiterfassung, Office 365`,
+      technologies: ["Bsp. Skill"]
     },
     {
       id: 2,
@@ -26,7 +27,8 @@ export const cvData = {
       period: "04.2021 - 05.2023",
       description: `• Teamleitung, Beratung und Verkauf (8 Mitarbeiter)
       • Umsatzsteuerung
-      • Präsentation und Pflege der Ware`
+      • Präsentation und Pflege der Ware`,
+      technologies: ["Bsp. Skill"]
     },
     {
       id: 3,
@@ -35,14 +37,16 @@ export const cvData = {
       period: "10.2018 - 12.2020",
       description: `• Vertriebsaufbau und Teamleitung (5-7 Mitarbeiter)
         • Unterstützung bei Neukundenakquise
-        • Kundenberatung und - betreuung`
+        • Kundenberatung und - betreuung`,
+      technologies: ["Bsp. Skill"]
     },
     {
       id: 4,
       company: "Österreichisches Bundesheer",
       position: "Schreiber des dienstführenden Unteroffiziers, Gefreiter, Grundwehrdienst",
       period: "02.2018 - 08.2018",
-      description: `• Administrative Tätigkeiten & Verantwortung über Kameraden der restlichen "Versogungsgruppe"`
+      description: `• Administrative Tätigkeiten & Verantwortung über Kameraden der restlichen "Versogungsgruppe"`,
+      technologies: ["Bsp. Skill"]
     }
   ],
   skills: {
@@ -129,6 +133,7 @@ export const cvData = {
     }
   ]
 };
+
 
 
 
