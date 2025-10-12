@@ -97,27 +97,33 @@ export const cvData = {
     });
     return simpleSkills;
   },
-  projects: [
+  voluntaryActivities: [
     {
       id: 1,
-      name: "E-commerce Platform",
-      description: "Full-stack e-commerce solution with real-time inventory and payment processing",
-      technologies: ["React", "Node.js", "MongoDB", "Stripe API"],
-      link: "https://github.com/alexjohnson/ecommerce-platform"
+      organization: "Open Source Community",
+      role: "Core Contributor",
+      period: "2019 - Present",
+      description: "Regular contributor to various open source projects, focusing on React ecosystem and developer tools.",
+      technologies: ["React", "TypeScript", "Open Source", "Community"],
+      link: "https://github.com/alexjohnson"
     },
     {
       id: 2,
-      name: "Task Management App",
-      description: "Collaborative project management tool with real-time updates and analytics",
-      technologies: ["Vue.js", "Firebase", "Chart.js", "PWA"],
-      link: "https://github.com/alexjohnson/task-manager"
+      organization: "Local Tech Mentorship Program",
+      role: "Volunteer Mentor",
+      period: "2020 - 2022",
+      description: "Mentored aspiring developers from underrepresented backgrounds, providing coding guidance and career advice.",
+      technologies: ["Mentoring", "Teaching", "Career Guidance", "Workshops"],
+      link: "https://example.com/mentorship"
     },
     {
       id: 3,
-      name: "Weather Dashboard",
-      description: "Real-time weather monitoring dashboard with predictive analytics",
-      technologies: ["React", "D3.js", "Weather API", "WebSocket"],
-      link: "https://github.com/alexjohnson/weather-dashboard"
+      organization: "Tech Conference Organization",
+      role: "Volunteer Coordinator",
+      period: "2021",
+      description: "Organized and coordinated volunteer activities for annual tech conference with 1000+ attendees.",
+      technologies: ["Event Planning", "Team Coordination", "Public Speaking", "Logistics"],
+      link: "https://example.com/conference"
     }
   ],
   education: [
@@ -133,6 +139,7 @@ export const cvData = {
     }
   ]
 };
+
 
 
 
