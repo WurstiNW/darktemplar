@@ -50,7 +50,7 @@ export const cvData = {
     }
   ],
   skills: {
-    "Sprachen": [
+    "Languages": [
       { name: "Deutsch", percentage: 100 },
       { name: "Englisch", percentage: 80 }
     ],
@@ -60,11 +60,16 @@ export const cvData = {
       { name: "MS-Office", percentage: 90 },
       { name: "MySQL", percentage: 50 }
     ],
-    "Stärken": [
+    "Strengths": [
       { name: "Ergebnisorientiert", percentage: 100 },
       { name: "Flexibel", percentage: 100 },
       { name: "Lernbereitschaft", percentage: 100 },
       { name: "Motivation", percentage: 100 }
+    ],
+    "Hobbies": [
+      { name: "Gaming", percentage: 100 },
+      { name: "Laufen", percentage: 100 },
+      { name: "Tennis", percentage: 100 }
     ]
   },
   // Helper function to get skills as simple array for other components
@@ -150,6 +155,7 @@ export const cvData = {
     }
   ]
 };
+
 
 
 
