@@ -17,6 +17,18 @@
   --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
+html, body {
+  background: transparent !important;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+#root, .App {
+  background: transparent !important;
+  min-height: 100vh;
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -26,12 +38,15 @@ body {
   line-height: 1.6;
   color: var(--text-primary);
   overflow-x: hidden;
+  background: transparent !important;
 }
 
 .App {
   position: relative;
   min-height: 100vh;
+  background: transparent !important;
 }
+
 
 /* Background Styles */
 .background-container {
@@ -408,3 +423,4 @@ html {
   background: var(--text-primary);
 
 }
+
