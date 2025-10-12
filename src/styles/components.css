@@ -1,11 +1,11 @@
 /* About Section */
 .about-section {
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.92) !important;
   backdrop-filter: blur(20px);
   border-radius: 20px;
   margin: 2rem auto;
-  box-shadow: var(--shadow);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .about-grid {
@@ -102,12 +102,12 @@
 
 /* Skills Section */
 .skills-section {
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.92) !important;
   backdrop-filter: blur(20px);
   border-radius: 20px;
   margin: 2rem auto;
-  box-shadow: var(--shadow);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .skills-grid {
@@ -174,6 +174,7 @@
   font-weight: 600;
   color: var(--text-primary);
   font-size: 0.95rem;
+  flex: 1;
 }
 
 .skill-info {
@@ -181,6 +182,8 @@
   align-items: center;
   gap: 0.75rem;
   font-size: 0.85rem;
+  min-width: 120px;
+  justify-content: flex-end;
 }
 
 .skill-level {
@@ -238,23 +241,45 @@
 .skill-level.beginner { color: #f59e0b; }
 .skill-level.novice { color: #ef4444; }
 
-/* Projects Section */
-.projects-section {
-  background: rgba(255, 255, 255, 0.8);
+/* Spacer for empty skill-info */
+.spacer {
+  width: 120px;
+  height: 1px;
+}
+
+/* Simple category styles for Hobbies and Strengths */
+.simple-category .skill-header {
+  justify-content: center;
+  text-align: center;
+}
+
+.simple-category .skill-name {
+  text-align: center;
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+.simple-category .skill-info {
+  display: none;
+}
+
+/* Voluntary Activities Section */
+.voluntary-section {
+  background: rgba(255, 255, 255, 0.92) !important;
   backdrop-filter: blur(20px);
   border-radius: 20px;
   margin: 2rem auto;
-  box-shadow: var(--shadow);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-.projects-grid {
+.activities-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   gap: 2rem;
 }
 
-.project-card {
+.activity-card {
   background: white;
   padding: 2rem;
   border-radius: 16px;
@@ -266,101 +291,82 @@
   height: 100%;
 }
 
-.project-card:hover {
+.activity-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
-.project-header {
+.activity-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 1rem;
+  gap: 1rem;
 }
 
-.project-header h3 {
+.activity-title h3 {
   color: var(--text-primary);
   font-size: 1.3rem;
-  margin: 0;
+  margin: 0 0 0.25rem 0;
+  line-height: 1.3;
 }
 
-.project-link {
-  color: var(--text-secondary);
-  font-size: 1.2rem;
-  transition: color 0.3s ease;
-}
-
-.project-link:hover {
+.activity-title h4 {
   color: var(--primary-color);
+  font-size: 1.1rem;
+  margin: 0;
+  font-weight: 600;
 }
 
-.project-description {
+.activity-period {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--gradient);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.period-icon {
+  font-size: 0.8rem;
+}
+
+.activity-description {
   color: var(--text-secondary);
   line-height: 1.6;
   margin-bottom: 1.5rem;
   flex-grow: 1;
 }
 
-.project-technologies {
+.activity-technologies {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  margin-bottom: 1.5rem;
 }
 
-.project-actions {
-  display: flex;
-  gap: 1rem;
-  margin-top: auto;
+/* Remove any pseudo-elements that might be causing the "/}" */
+.activity-card::after {
+  display: none;
 }
 
-.btn-outline {
-  background: transparent;
-  border: 2px solid var(--primary-color);
-  color: var(--primary-color);
-  padding: 0.75rem 1.5rem;
-  border-radius: 50px;
-  font-weight: 600;
-  text-decoration: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.btn-outline:hover {
-  background: var(--primary-color);
-  color: white;
-}
-
-.btn-secondary {
-  background: var(--text-secondary);
-  color: white;
-  padding: 0.75rem 1.5rem;
-  border-radius: 50px;
-  font-weight: 600;
-  text-decoration: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  border: none;
-}
-
-.btn-secondary:hover {
-  background: var(--text-primary);
-}
+/* Stagger animation for activity cards */
+.activity-card:nth-child(1) { animation-delay: 0.1s; }
+.activity-card:nth-child(2) { animation-delay: 0.2s; }
+.activity-card:nth-child(3) { animation-delay: 0.3s; }
 
 /* Contact Section */
 .contact-section {
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.92) !important;
   backdrop-filter: blur(20px);
   border-radius: 20px;
   margin: 2rem auto;
-  box-shadow: var(--shadow);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .contact-grid {
@@ -460,12 +466,12 @@
 
 /* Experience Section */
 .experience-section {
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.92) !important;
   backdrop-filter: blur(20px);
   border-radius: 20px;
   margin: 2rem auto;
-  box-shadow: var(--shadow);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .experience-timeline {
@@ -559,7 +565,7 @@
   padding: 0 2rem;
 }
 
-/* Background Styles */
+/* Finance Background Styles */
 .background-container {
   position: fixed;
   top: 0;
@@ -567,76 +573,177 @@
   width: 100%;
   height: 100%;
   z-index: -1;
-}
-
-.gradient-bg {
-  width: 100%;
-  height: 100%;
-  position: relative;
+  transition: transform 0.1s ease-out;
   overflow: hidden;
-  background: linear-gradient(40deg, var(--bg-secondary), #f0f4f8);
 }
 
-.gradients-container {
-  filter: url(#goo) blur(40px);
-  width: 100%;
-  height: 100%;
-}
-
-.g1, .g2, .g3, .g4, .g5 {
+.finance-background {
   position: absolute;
-  background: var(--primary-color);
-  border-radius: 50%;
-  mix-blend-mode: soft-light;
-  animation: float 20s infinite linear;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 200%; /* Extra height for parallax effect */
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  overflow: hidden;
 }
 
-.g1 {
-  width: 90vw;
-  height: 90vw;
-  top: -20vw;
-  left: -20vw;
+/* Stock Chart Animations */
+.stock-chart {
+  position: absolute;
+  background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.1), transparent);
+  border-radius: 2px;
   opacity: 0.3;
+}
+
+.chart-1 {
+  top: 10%;
+  left: 5%;
+  width: 300px;
+  height: 2px;
+  animation: stockWave 8s ease-in-out infinite;
+}
+
+.chart-2 {
+  top: 30%;
+  right: 10%;
+  width: 400px;
+  height: 3px;
+  animation: stockWave 12s ease-in-out infinite reverse;
+}
+
+.chart-3 {
+  bottom: 25%;
+  left: 15%;
+  width: 250px;
+  height: 2px;
+  animation: stockWave 10s ease-in-out infinite 2s;
+}
+
+@keyframes stockWave {
+  0%, 100% {
+    transform: translateY(0px) scaleX(1);
+    opacity: 0.3;
+  }
+  25% {
+    transform: translateY(-10px) scaleX(1.1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(5px) scaleX(0.9);
+    opacity: 0.2;
+  }
+  75% {
+    transform: translateY(-5px) scaleX(1.05);
+    opacity: 0.35;
+  }
+}
+
+/* Floating Currency Symbols */
+.finance-element {
+  position: absolute;
+  color: rgba(99, 102, 241, 0.15);
+  font-size: 2rem;
+  font-weight: bold;
+  font-family: 'Arial', sans-serif;
+  animation: floatCurrency 20s linear infinite;
+}
+
+.coin-1 {
+  top: 15%;
+  left: 8%;
   animation-delay: 0s;
 }
 
-.g2 {
-  width: 80vw;
-  height: 80vw;
-  top: -10vw;
-  right: -20vw;
-  opacity: 0.2;
+.coin-2 {
+  top: 60%;
+  right: 12%;
   animation-delay: -5s;
 }
 
-.g3 {
-  width: 70vw;
-  height: 70vw;
-  bottom: -20vw;
+.coin-3 {
+  bottom: 20%;
   left: 20%;
-  opacity: 0.25;
   animation-delay: -10s;
 }
 
-.g4 {
-  width: 60vw;
-  height: 60vw;
-  bottom: -10vw;
-  right: 10%;
-  opacity: 0.15;
+.coin-4 {
+  top: 40%;
+  right: 25%;
   animation-delay: -15s;
 }
 
-@keyframes float {
+@keyframes floatCurrency {
+  0% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+    opacity: 0.1;
+  }
+  25% {
+    transform: translateY(-40px) rotate(90deg) scale(1.2);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translateY(-20px) rotate(180deg) scale(0.8);
+    opacity: 0.05;
+  }
+  75% {
+    transform: translateY(-60px) rotate(270deg) scale(1.1);
+    opacity: 0.15;
+  }
+  100% {
+    transform: translateY(0px) rotate(360deg) scale(1);
+    opacity: 0.1;
+  }
+}
+
+/* Data Points (like scatter plot) */
+.data-point {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: rgba(99, 102, 241, 0.2);
+  border-radius: 50%;
+  animation: pulse 4s ease-in-out infinite;
+}
+
+.point-1 { top: 25%; left: 12%; animation-delay: 0s; }
+.point-2 { top: 45%; right: 18%; animation-delay: -1s; }
+.point-3 { bottom: 35%; left: 25%; animation-delay: -2s; }
+.point-4 { top: 65%; right: 30%; animation-delay: -3s; }
+.point-5 { bottom: 15%; left: 35%; animation-delay: -4s; }
+
+@keyframes pulse {
   0%, 100% {
-    transform: translateY(0) rotate(0deg);
+    transform: scale(1);
+    opacity: 0.2;
   }
-  33% {
-    transform: translateY(-30px) rotate(120deg);
+  50% {
+    transform: scale(1.5);
+    opacity: 0.4;
   }
-  66% {
-    transform: translateY(30px) rotate(240deg);
-  }
+}
+
+/* Grid Lines */
+.grid-line {
+  position: absolute;
+  background: rgba(99, 102, 241, 0.05);
+}
+
+.horizontal-1 { top: 33.33%; left: 0; width: 100%; height: 1px; }
+.horizontal-2 { top: 66.66%; left: 0; width: 100%; height: 1px; }
+.vertical-1 { top: 0; left: 33.33%; width: 1px; height: 100%; }
+.vertical-2 { top: 0; left: 66.66%; width: 1px; height: 100%; }
+
+/* Background Gradient Overlay */
+.finance-gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(99, 102, 241, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(139, 92, 246, 0.03) 0%, transparent 50%);
 }
 
 /* Header Styles */
@@ -644,7 +751,7 @@
   position: fixed;
   top: 0;
   width: 100%;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   z-index: 1000;
@@ -714,6 +821,22 @@
   display: flex;
   align-items: center;
   padding: 0 2rem;
+  position: relative;
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(255, 255, 255, 0.85) 100%
+  );
+  z-index: -1;
 }
 
 .hero-container {
@@ -787,6 +910,45 @@
 .btn-primary:hover {
   transform: translateY(-2px);
   box-shadow: 0 20px 40px -10px rgba(99, 102, 241, 0.4);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 2px solid var(--primary-color);
+  color: var(--primary-color);
+  padding: 0.75rem 1.5rem;
+  border-radius: 50px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-outline:hover {
+  background: var(--primary-color);
+  color: white;
+}
+
+.btn-secondary {
+  background: var(--text-secondary);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 50px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: none;
+}
+
+.btn-secondary:hover {
+  background: var(--text-primary);
 }
 
 .social-links {
@@ -877,10 +1039,10 @@ section {
 .timeline-item:nth-child(2) { animation-delay: 0.2s; }
 .timeline-item:nth-child(3) { animation-delay: 0.3s; }
 
-/* Stagger animation for project cards */
-.project-card:nth-child(1) { animation-delay: 0.1s; }
-.project-card:nth-child(2) { animation-delay: 0.2s; }
-.project-card:nth-child(3) { animation-delay: 0.3s; }
+/* Stagger animation for activity cards */
+.activity-card:nth-child(1) { animation-delay: 0.1s; }
+.activity-card:nth-child(2) { animation-delay: 0.2s; }
+.activity-card:nth-child(3) { animation-delay: 0.3s; }
 
 /* Responsive Design */
 @media (max-width: 768px) {
@@ -916,7 +1078,7 @@ section {
     grid-template-columns: 1fr;
   }
   
-  .projects-grid {
+  .activities-grid {
     grid-template-columns: 1fr;
   }
   
@@ -944,6 +1106,20 @@ section {
   .container {
     padding: 0 1rem;
   }
+
+  /* Mobile adjustments for finance background */
+  .stock-chart {
+    display: none;
+  }
+  
+  .finance-element {
+    font-size: 1.5rem;
+    opacity: 0.08;
+  }
+  
+  .data-point {
+    display: none;
+  }
 }
 
 @media (max-width: 480px) {
@@ -968,6 +1144,51 @@ section {
   section > h2 {
     font-size: 2rem;
   }
+
+  .activity-card {
+    padding: 1.5rem;
+  }
+  
+  .activity-title h3 {
+    font-size: 1.2rem;
+  }
+  
+  .activity-title h4 {
+    font-size: 1rem;
+  }
+
+  .activity-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .activity-period {
+    align-self: flex-start;
+  }
+}
+
+/* Performance Optimizations */
+@media (prefers-reduced-motion: reduce) {
+  .stock-chart,
+  .finance-element,
+  .data-point {
+    animation: none;
+  }
+  
+  .background-container {
+    transition: none;
+  }
+  
+  .floating-card {
+    animation: none;
+  }
+  
+  section {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
 }
 
 /* Print Styles */
@@ -991,152 +1212,3 @@ section {
     padding: 2rem 0 !important;
   }
 }
-
-/* Voluntary Activities Section */
-.voluntary-section {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(20px);
-  border-radius: 20px;
-  margin: 2rem auto;
-  box-shadow: var(--shadow);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.activities-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 2rem;
-}
-
-.activity-card {
-  background: white;
-  padding: 2rem;
-  border-radius: 16px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  border: 1px solid var(--border-color);
-  transition: all 0.3s ease;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  position: relative;
-}
-
-.activity-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-}
-
-.activity-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 1rem;
-  gap: 1rem;
-}
-
-.activity-title h3 {
-  color: var(--text-primary);
-  font-size: 1.3rem;
-  margin: 0 0 0.25rem 0;
-  line-height: 1.3;
-}
-
-.activity-title h4 {
-  color: var(--primary-color);
-  font-size: 1.1rem;
-  margin: 0;
-  font-weight: 600;
-}
-
-.activity-period {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: var(--gradient);
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 50px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.period-icon {
-  font-size: 0.8rem;
-}
-
-.activity-description {
-  color: var(--text-secondary);
-  line-height: 1.6;
-  margin-bottom: 1.5rem;
-  flex-grow: 1;
-}
-
-.activity-technologies {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
-}
-
-.activity-actions {
-  display: flex;
-  gap: 1rem;
-  margin-top: auto;
-}
-
-/* Stagger animation for activity cards */
-.activity-card:nth-child(1) { animation-delay: 0.1s; }
-.activity-card:nth-child(2) { animation-delay: 0.2s; }
-.activity-card:nth-child(3) { animation-delay: 0.3s; }
-
-/* Responsive design for voluntary activities */
-@media (max-width: 768px) {
-  .activities-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .activity-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-  }
-  
-  .activity-period {
-    align-self: flex-start;
-  }
-}
-
-@media (max-width: 480px) {
-  .activity-card {
-    padding: 1.5rem;
-  }
-  
-  .activity-title h3 {
-    font-size: 1.2rem;
-  }
-  
-  .activity-title h4 {
-    font-size: 1rem;
-  }
-}
-
-/* Simple category styles for Hobbies and Strengths */
-.simple-category .skill-header {
-  justify-content: center;
-  text-align: center;
-}
-
-.simple-category .skill-name {
-  text-align: center;
-  width: 100%;
-  margin-bottom: 0.5rem;
-}
-
-.simple-category .skill-info {
-  display: none; /* Completely hide the info area */
-}
-
-
-
