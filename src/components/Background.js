@@ -67,9 +67,9 @@ const Background = () => {
         canvas.height / 2,
         Math.max(canvas.width, canvas.height) / 2
       );
-      gradient.addColorStop(0, 'rgba(10, 15, 40, 0.9)');
-      gradient.addColorStop(0.5, 'rgba(20, 25, 60, 0.8)');
-      gradient.addColorStop(1, 'rgba(30, 35, 80, 0.7)');
+      gradient.addColorStop(0, 'rgba(10, 15, 40, 0.95)'); // Darker for better contrast
+      gradient.addColorStop(0.5, 'rgba(20, 25, 60, 0.9)');
+      gradient.addColorStop(1, 'rgba(30, 35, 80, 0.85)');
       
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -205,11 +205,13 @@ const Background = () => {
 
     animate();
 
-    // Scroll parallax effect
+    // Scroll parallax effect - make it more subtle
     const handleScroll = () => {
       const scrolled = window.pageYOffset;
-      const parallaxSpeed = 0.3;
-      canvas.style.transform = `translateY(${scrolled * parallaxSpeed}px) scale(1.1)`;
+      const parallaxSpeed = 0.2; // Slower for better effect
+      if (canvasRef.current) {
+        canvasRef.current.style.transform = `translateY(${scrolled * parallaxSpeed}px) scale(1.05)`;
+      }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -218,7 +220,9 @@ const Background = () => {
       window.removeEventListener('resize', resizeCanvas);
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('scroll', handleScroll);
-      cancelAnimationFrame(animationRef.current);
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
     };
   }, []);
 
