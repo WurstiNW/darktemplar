@@ -29,10 +29,15 @@ const Skills = () => {
     return '#ef4444'; // Red
   };
 
+  // Check if category should show skill level
+  const shouldShowSkillLevel = (category) => {
+    return category === 'Languages' || category === 'IT';
+  };
+
   return (
     <section id="skills" className="skills-section">
       <div className="container">
-        <h2>Skills</h2> {/* Changed from "Skills & Technologies" */}
+        <h2>Skills</h2>
         <div className="skills-grid">
           {Object.entries(cvData.skills).map(([category, skills]) => (
             <div key={category} className="skill-category">
@@ -48,13 +53,19 @@ const Skills = () => {
                     <div className="skill-header">
                       <span className="skill-name">{skill.name}</span>
                       <div className="skill-info">
-                        <span 
-                          className="skill-level"
-                          style={{ color: getLevelColor(skill.percentage) }}
-                        >
-                          {getSkillLevel(skill.percentage)}
-                        </span>
-                        <span className="skill-percentage">{skill.percentage}%</span>
+                        {shouldShowSkillLevel(category) ? (
+                          <>
+                            <span 
+                              className="skill-level"
+                              style={{ color: getLevelColor(skill.percentage) }}
+                            >
+                              {getSkillLevel(skill.percentage)}
+                            </span>
+                            <span className="skill-percentage">{skill.percentage}%</span>
+                          </>
+                        ) : (
+                          <span className="skill-percentage">{skill.percentage}%</span>
+                        )}
                       </div>
                     </div>
                     <div className="skill-bar">
