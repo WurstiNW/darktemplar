@@ -1,16 +1,15 @@
 import React from 'react';
 import { cvData } from '../data/cvData';
-import { FaCode, FaServer, FaDatabase, FaCloud, FaTools } from 'react-icons/fa';
+import { FaLanguage, FaLaptopCode, FaHeart, FaStar } from 'react-icons/fa';
 
 const Skills = () => {
   const getIcon = (category) => {
     switch (category) {
-      case 'Frontend': return <FaCode />;
-      case 'Backend': return <FaServer />;
-      case 'Database': return <FaDatabase />;
-      case 'DevOps': return <FaCloud />;
-      case 'Tools': return <FaTools />;
-      default: return <FaCode />;
+      case 'Languages': return <FaLanguage />;
+      case 'IT': return <FaLaptopCode />;
+      case 'Hobbies': return <FaHeart />;
+      case 'Strengths': return <FaStar />;
+      default: return <FaStar />;
     }
   };
 
@@ -33,7 +32,7 @@ const Skills = () => {
   return (
     <section id="skills" className="skills-section">
       <div className="container">
-        <h2>Skills & Technologies</h2>
+        <h2>Skills</h2> {/* Changed from "Skills & Technologies" */}
         <div className="skills-grid">
           {Object.entries(cvData.skills).map(([category, skills]) => (
             <div key={category} className="skill-category">
