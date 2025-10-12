@@ -55,10 +55,10 @@ export const cvData = {
       { name: "Englisch", percentage: 80 }
     ],
     "IT": [      
-      { name: "HTML", percentage: 50 },
-      { name: "Java", percentage: 50 },
+      { name: "HTML", percentage: 60 },
+      { name: "Java", percentage: 60 },
       { name: "MS-Office", percentage: 90 },
-      { name: "MySQL", percentage: 50 }
+      { name: "MySQL", percentage: 60 }
     ],
     "Strengths": [
       { name: "Ergebnisorientiert", percentage: 100 },
@@ -155,6 +155,7 @@ export const cvData = {
     }
   ]
 };
+
 
 
 
