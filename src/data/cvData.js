@@ -15,26 +15,34 @@ export const cvData = {
       position: "Brand Manager / Projekt Manager",
       period: "06.2023 - Present",
       description: `• Internationale Markenentwicklung am österreichischen Markt (z.B.: Rummo, Kikkoman)
-• Laufende Weiterentwicklung der Kundenverkaufskanäle (Promotionen, PoS Platzierung)
-• Kommunikation, Reporting und Budgetverhandlungen mit Lieferanten
-• Leitung von diversen (internen)-Projekten (Distributorenmeetings, IT-Infrastruktur, CRM, Zeiterfassung, Office 365)`,
-      technologies: ["React", "Node.js", "AWS", "MongoDB", "Docker"]
+      • Laufende Weiterentwicklung der Kundenverkaufskanäle (Promotionen, PoS Platzierung)
+      • Kommunikation, Reporting und Budgetverhandlungen mit Lieferanten
+      • Leitung von diversen (internen)-Projekten (Distributorenmeetings, IT-Infrastruktur, CRM, Zeiterfassung, Office 365)`
     },
     {
       id: 2,
-      company: "Digital Solutions LLC",
-      position: "Full Stack Developer",
-      period: "2017 - 2020",
-      description: "Developed and maintained e-commerce platforms with 99.9% uptime. Improved application performance by 60% through code optimization.",
-      technologies: ["Vue.js", "PHP", "MySQL", "Redis", "Linux"]
+      company: "Mömax GmbH",
+      position: "Abteilungsleiter Mömax Vösendorf",
+      period: "04.2021 - 05.2023",
+      description: `• Teamleitung, Beratung und Verkauf (8 Mitarbeiter)
+      • Umsatzsteuerung
+      • Präsentation und Pflege der Ware`
     },
     {
       id: 3,
-      company: "StartUp Ventures",
-      position: "Frontend Developer",
-      period: "2015 - 2017",
-      description: "Built responsive web applications and collaborated with UX designers to implement modern interfaces.",
-      technologies: ["JavaScript", "HTML5", "CSS3", "jQuery", "Bootstrap"]
+      company: "OVB Allfinanzvermittlungs GmbH",
+      position: "Junior-Geschäftsstellenleiter",
+      period: "10.2018 - 12.2020",
+      description: `• Vertriebsaufbau und Teamleitung (5-7 Mitarbeiter)
+        • Unterstützung bei Neukundenakquise
+        • Kundenberatung und - betreuung`
+    },
+    {
+      id: 4,
+      company: "Österreichisches Bundesheer",
+      position: "Schreiber des dienstführenden Unteroffiziers, Gefreiter, Grundwehrdienst",
+      period: "02.2018 - 08.2018",
+      description: `• Administrative Tätigkeiten & Verantwortung über Kameraden der restlichen "Versogungsgruppe"`
     }
   ],
   skills: {
@@ -121,6 +129,7 @@ export const cvData = {
     }
   ]
 };
+
 
 
 
