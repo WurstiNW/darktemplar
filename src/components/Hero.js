@@ -16,7 +16,6 @@ const Hero = () => {
       <div className="hero-container">
         <div className="hero-content">
           <h1 className="hero-title">
-            // <span className="title-line">Hello, I'm</span>
             <span className="title-name">{cvData.personal.name}</span>
           </h1>
           <h2 className="hero-subtitle">{cvData.personal.title}</h2>
@@ -55,4 +54,5 @@ const Hero = () => {
 };
 
 export default Hero;
+
 
