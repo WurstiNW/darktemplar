@@ -1,6 +1,6 @@
 /* Finance Background Styles */
 .background-container {
-  position: absolute; /
+  position: absolute; 
   top: 0;
   left: 0;
   width: 100%;
@@ -1224,6 +1224,7 @@ section {
   min-height: 100vh; 
   padding: 6rem 2rem;
 }
+
 
 
 
