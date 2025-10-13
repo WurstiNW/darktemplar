@@ -11,7 +11,7 @@ const Background = () => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     
-    // Set canvas size to cover entire viewport
+    // Set canvas size
     const resizeCanvas = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
@@ -20,24 +20,51 @@ const Background = () => {
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
-    // Create particles
+    // Create finance-themed particles
     const createParticles = () => {
       const particles = [];
-      const particleCount = Math.min(150, Math.floor((window.innerWidth * window.innerHeight) / 10000));
+      const particleCount = Math.min(80, Math.floor((window.innerWidth * window.innerHeight) / 15000));
       
       for (let i = 0; i < particleCount; i++) {
-        particles.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          size: Math.random() * 3 + 1,
-          speedX: (Math.random() - 0.5) * 0.5,
-          speedY: (Math.random() - 0.5) * 0.5,
-          color: `rgba(${Math.random() * 100 + 155}, ${Math.random() * 100 + 155}, ${Math.random() * 100 + 255}, ${Math.random() * 0.3 + 0.1})`,
-          orbitRadius: Math.random() * 50 + 20,
-          orbitSpeed: (Math.random() - 0.5) * 0.02,
-          angle: Math.random() * Math.PI * 2,
-          type: Math.random() > 0.8 ? 'star' : 'particle'
-        });
+        const type = Math.random();
+        let particleConfig;
+        
+        if (type < 0.3) {
+          // Data points (like scatter plot)
+          particleConfig = {
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            size: Math.random() * 2 + 1,
+            speedX: 0,
+            speedY: 0,
+            color: `rgba(74, 222, 128, ${Math.random() * 0.3 + 0.1})`, // Green
+            type: 'data'
+          };
+        } else if (type < 0.6) {
+          // Gentle floating elements (like market movements)
+          particleConfig = {
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            size: Math.random() * 1.5 + 0.5,
+            speedX: (Math.random() - 0.5) * 0.2,
+            speedY: (Math.random() - 0.5) * 0.2,
+            color: `rgba(96, 165, 250, ${Math.random() * 0.2 + 0.05})`, // Blue
+            type: 'float'
+          };
+        } else {
+          // Grid reference points
+          particleConfig = {
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            size: Math.random() * 1 + 0.5,
+            speedX: 0,
+            speedY: 0,
+            color: `rgba(148, 163, 184, ${Math.random() * 0.1 + 0.02})`, // Gray
+            type: 'grid'
+          };
+        }
+        
+        particles.push(particleConfig);
       }
       return particles;
     };
@@ -58,143 +85,156 @@ const Background = () => {
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
-      // Create solid dark background (no white space)
-      ctx.fillStyle = 'rgba(10, 15, 40, 1)';
+      // Create professional finance gradient background
+      const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+      gradient.addColorStop(0, '#0f172a'); // Dark blue-gray
+      gradient.addColorStop(0.5, '#1e293b'); // Medium blue-gray
+      gradient.addColorStop(1, '#334155'); // Light blue-gray
+      
+      ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Draw subtle grid lines (like financial charts)
+      drawGrid(ctx, canvas);
+      
+      // Draw trend lines (like stock charts)
+      drawTrendLines(ctx, canvas);
 
       // Update and draw particles
       particlesRef.current.forEach((particle, index) => {
-        // Mouse interaction
-        const dx = particle.x - mouseRef.current.x;
-        const dy = particle.y - mouseRef.current.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        
-        if (distance < 100) {
-          const force = (100 - distance) / 100;
-          particle.x += (dx / distance) * force * 2;
-          particle.y += (dy / distance) * force * 2;
+        // Only move floating particles
+        if (particle.type === 'float') {
+          particle.x += particle.speedX;
+          particle.y += particle.speedY;
+
+          // Boundary check with wrap-around
+          if (particle.x < -particle.size) particle.x = canvas.width + particle.size;
+          if (particle.x > canvas.width + particle.size) particle.x = -particle.size;
+          if (particle.y < -particle.size) particle.y = canvas.height + particle.size;
+          if (particle.y > canvas.height + particle.size) particle.y = -particle.size;
         }
-
-        // Orbital motion for some particles
-        if (particle.type === 'star') {
-          particle.angle += particle.orbitSpeed;
-          particle.x += Math.cos(particle.angle) * 0.3;
-          particle.y += Math.sin(particle.angle) * 0.3;
-        }
-
-        // Regular movement
-        particle.x += particle.speedX;
-        particle.y += particle.speedY;
-
-        // Boundary check with wrap-around
-        if (particle.x < -particle.size) particle.x = canvas.width + particle.size;
-        if (particle.x > canvas.width + particle.size) particle.x = -particle.size;
-        if (particle.y < -particle.size) particle.y = canvas.height + particle.size;
-        if (particle.y > canvas.height + particle.size) particle.y = -particle.size;
 
         // Draw particle
         ctx.beginPath();
-        
-        if (particle.type === 'star') {
-          // Draw stars with glow effect
-          const glow = ctx.createRadialGradient(
-            particle.x, particle.y, 0,
-            particle.x, particle.y, particle.size * 3
-          );
-          glow.addColorStop(0, particle.color);
-          glow.addColorStop(1, 'rgba(255, 255, 255, 0)');
-          
-          ctx.fillStyle = glow;
-          ctx.arc(particle.x, particle.y, particle.size * 3, 0, Math.PI * 2);
-          ctx.fill();
-        }
-
-        // Main particle
-        ctx.beginPath();
         ctx.fillStyle = particle.color;
-        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+        
+        if (particle.type === 'data') {
+          // Data points as small circles
+          ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+        } else {
+          // Other particles as squares/diamonds for professional look
+          ctx.rect(particle.x - particle.size/2, particle.y - particle.size/2, particle.size, particle.size);
+        }
+        
         ctx.fill();
 
-        // Draw connections between nearby particles
-        particlesRef.current.forEach((otherParticle, otherIndex) => {
-          if (index !== otherIndex) {
-            const dx = particle.x - otherParticle.x;
-            const dy = particle.y - otherParticle.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-            
-            if (distance < 150) {
-              ctx.beginPath();
-              ctx.strokeStyle = `rgba(100, 150, 255, ${0.1 * (1 - distance / 150)})`;
-              ctx.lineWidth = 0.5;
-              ctx.moveTo(particle.x, particle.y);
-              ctx.lineTo(otherParticle.x, otherParticle.y);
-              ctx.stroke();
+        // Draw connections between nearby data points
+        if (particle.type === 'data') {
+          particlesRef.current.forEach((otherParticle, otherIndex) => {
+            if (index !== otherIndex && otherParticle.type === 'data') {
+              const dx = particle.x - otherParticle.x;
+              const dy = particle.y - otherParticle.y;
+              const distance = Math.sqrt(dx * dx + dy * dy);
+              
+              if (distance < 120) {
+                ctx.beginPath();
+                ctx.strokeStyle = `rgba(74, 222, 128, ${0.05 * (1 - distance / 120)})`;
+                ctx.lineWidth = 0.3;
+                ctx.moveTo(particle.x, particle.y);
+                ctx.lineTo(otherParticle.x, otherParticle.y);
+                ctx.stroke();
+              }
             }
-          }
-        });
+          });
+        }
       });
 
-      // Add floating financial elements
-      drawFloatingElements(ctx, canvas);
+      // Add floating finance indicators
+      drawFinanceIndicators(ctx, canvas);
       
       animationRef.current = requestAnimationFrame(animate);
     };
 
-    const drawFloatingElements = (ctx, canvas) => {
+    const drawGrid = (ctx, canvas) => {
+      ctx.strokeStyle = 'rgba(100, 116, 139, 0.1)';
+      ctx.lineWidth = 0.5;
+      
+      // Vertical lines
+      for (let x = 0; x < canvas.width; x += 50) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+      }
+      
+      // Horizontal lines
+      for (let y = 0; y < canvas.height; y += 50) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+      }
+    };
+
+    const drawTrendLines = (ctx, canvas) => {
       const time = Date.now() * 0.001;
       
-      // Floating currency symbols
-      const symbols = ['$', '€', '£', '¥', '₿'];
-      symbols.forEach((symbol, index) => {
-        const x = (canvas.width / (symbols.length + 1)) * (index + 1);
-        const y = canvas.height / 2 + Math.sin(time * 0.5 + index) * 100;
-        const size = 20 + Math.sin(time + index) * 5;
-        
-        ctx.save();
-        ctx.globalAlpha = 0.15 + Math.sin(time + index) * 0.1;
-        ctx.fillStyle = 'rgba(100, 200, 255, 0.3)';
-        ctx.font = `${size}px Arial`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(symbol, x, y);
-        ctx.restore();
-      });
-
-      // Animated wave lines (stock chart-like)
+      // Upward trend line (green)
       ctx.beginPath();
-      ctx.strokeStyle = 'rgba(80, 180, 255, 0.1)';
+      ctx.strokeStyle = 'rgba(74, 222, 128, 0.15)';
       ctx.lineWidth = 2;
-      
-      for (let x = 0; x < canvas.width; x += 10) {
-        const y = canvas.height / 3 + Math.sin(x * 0.01 + time * 2) * 30;
-        if (x === 0) {
-          ctx.moveTo(x, y);
-        } else {
-          ctx.lineTo(x, y);
-        }
+      ctx.moveTo(0, canvas.height * 0.7);
+      for (let x = 0; x < canvas.width; x += 20) {
+        const y = canvas.height * 0.7 - Math.sin(x * 0.01 + time) * 50 - x * 0.05;
+        ctx.lineTo(x, y);
       }
       ctx.stroke();
 
-      // Second wave
+      // Gentle wave line (blue)
       ctx.beginPath();
-      ctx.strokeStyle = 'rgba(180, 80, 255, 0.1)';
-      ctx.lineWidth = 2;
-      
-      for (let x = 0; x < canvas.width; x += 10) {
-        const y = canvas.height * 2/3 + Math.cos(x * 0.008 + time * 1.5) * 40;
-        if (x === 0) {
-          ctx.moveTo(x, y);
-        } else {
-          ctx.lineTo(x, y);
-        }
+      ctx.strokeStyle = 'rgba(96, 165, 250, 0.1)';
+      ctx.lineWidth = 1.5;
+      ctx.moveTo(0, canvas.height * 0.4);
+      for (let x = 0; x < canvas.width; x += 15) {
+        const y = canvas.height * 0.4 + Math.cos(x * 0.008 + time * 0.8) * 30;
+        ctx.lineTo(x, y);
       }
       ctx.stroke();
     };
 
-    animate();
+    const drawFinanceIndicators = (ctx, canvas) => {
+      const time = Date.now() * 0.001;
+      
+      // Floating percentage indicators
+      const percentages = ['+2.4%', '+1.8%', '+3.2%', '-0.5%', '+4.1%'];
+      percentages.forEach((percent, index) => {
+        const x = (canvas.width / (percentages.length + 1)) * (index + 1);
+        const y = canvas.height * 0.3 + Math.sin(time * 0.5 + index) * 40;
+        
+        ctx.save();
+        ctx.globalAlpha = 0.2 + Math.sin(time + index) * 0.1;
+        ctx.fillStyle = percent.startsWith('+') ? 'rgba(74, 222, 128, 0.4)' : 'rgba(248, 113, 113, 0.4)';
+        ctx.font = '16px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(percent, x, y);
+        ctx.restore();
+      });
 
-    // Remove scroll parallax effect since it's causing issues
-    // The background is fixed and covers entire viewport
+      // Bar chart-like elements
+      for (let i = 0; i < 8; i++) {
+        const x = 100 + i * 80;
+        const height = 20 + Math.sin(time * 2 + i) * 15;
+        const isPositive = i % 3 !== 0;
+        
+        ctx.fillStyle = isPositive 
+          ? 'rgba(74, 222, 128, 0.25)' 
+          : 'rgba(248, 113, 113, 0.25)';
+        ctx.fillRect(x, canvas.height - 100 - height, 30, height);
+      }
+    };
+
+    animate();
 
     return () => {
       window.removeEventListener('resize', resizeCanvas);
@@ -209,7 +249,7 @@ const Background = () => {
     <div className="background-container">
       <canvas 
         ref={canvasRef} 
-        className="space-background"
+        className="finance-background"
       />
       <div className="background-overlay"></div>
     </div>
