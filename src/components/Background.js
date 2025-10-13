@@ -10,6 +10,7 @@ const Background = () => {
   const scrollYRef = useRef(0);
   const ripplesRef = useRef([]);
   const explosionsRef = useRef([]);
+  const parallaxElementsRef = useRef([]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -23,6 +24,7 @@ const Background = () => {
       canvas.width = window.innerWidth;
       canvas.height = totalHeight; // Make canvas match the full page height
       createInteractionZones();
+      createParallaxElements();
     };
     
     // Scroll handling
@@ -41,7 +43,8 @@ const Background = () => {
           width: 200,
           height: 120,
           type: 'growth-chart',
-          hover: false
+          hover: false,
+          scrollSpeed: 0.7
         },
         {
           x: canvas.width * 0.7,
@@ -49,7 +52,8 @@ const Background = () => {
           width: 180,
           height: 100,
           type: 'metrics',
-          hover: false
+          hover: false,
+          scrollSpeed: 0.5
         },
         // Middle section
         {
@@ -58,7 +62,8 @@ const Background = () => {
           width: 220,
           height: 100,
           type: 'analytics',
-          hover: false
+          hover: false,
+          scrollSpeed: 0.8
         },
         {
           x: canvas.width * 0.6,
@@ -66,7 +71,8 @@ const Background = () => {
           width: 200,
           height: 120,
           type: 'performance',
-          hover: false
+          hover: false,
+          scrollSpeed: 0.6
         },
         // Bottom section
         {
@@ -75,7 +81,8 @@ const Background = () => {
           width: 180,
           height: 100,
           type: 'revenue',
-          hover: false
+          hover: false,
+          scrollSpeed: 0.9
         },
         {
           x: canvas.width * 0.7,
@@ -83,7 +90,61 @@ const Background = () => {
           width: 200,
           height: 120,
           type: 'growth',
-          hover: false
+          hover: false,
+          scrollSpeed: 0.4
+        }
+      ];
+    };
+
+    // Create parallax elements at different scroll positions
+    const createParallaxElements = () => {
+      const totalHeight = canvas.height;
+      parallaxElementsRef.current = [
+        // Top section elements
+        {
+          type: 'bar-chart',
+          x: canvas.width * 0.1,
+          y: 200,
+          width: 300,
+          height: 150,
+          scrollSpeed: 0.7,
+          data: [65, 80, 45, 90, 75, 60]
+        },
+        {
+          type: 'trend-line',
+          x: canvas.width * 0.6,
+          y: 300,
+          width: 400,
+          height: 100,
+          scrollSpeed: 0.5,
+          points: []
+        },
+        // Middle section elements
+        {
+          type: 'metrics',
+          x: canvas.width * 0.2,
+          y: totalHeight * 0.4,
+          width: 200,
+          height: 100,
+          scrollSpeed: 0.8,
+          values: ['+24.8%', '+18.3%', '+32.1%']
+        },
+        {
+          type: 'growth-chart',
+          x: canvas.width * 0.65,
+          y: totalHeight * 0.5,
+          width: 250,
+          height: 120,
+          scrollSpeed: 0.6
+        },
+        // Bottom section elements  
+        {
+          type: 'analytics',
+          x: canvas.width * 0.3,
+          y: totalHeight * 0.8,
+          width: 280,
+          height: 130,
+          scrollSpeed: 0.9
         }
       ];
     };
@@ -108,7 +169,8 @@ const Background = () => {
             speedY: 0,
             color: `rgba(74, 222, 128, ${Math.random() * 0.5 + 0.3})`,
             type: 'data',
-            pulse: Math.random() * Math.PI * 2
+            pulse: Math.random() * Math.PI * 2,
+            scrollSpeed: 0.3
           };
         } else if (type < 0.7) {
           particleConfig = {
@@ -119,7 +181,8 @@ const Background = () => {
             speedY: (Math.random() - 0.5) * 0.3,
             color: `rgba(96, 165, 250, ${Math.random() * 0.4 + 0.2})`,
             type: 'indicator',
-            pulse: Math.random() * Math.PI * 2
+            pulse: Math.random() * Math.PI * 2,
+            scrollSpeed: 0.5
           };
         } else {
           particleConfig = {
@@ -131,7 +194,8 @@ const Background = () => {
             color: `rgba(248, 113, 113, ${Math.random() * 0.4 + 0.2})`,
             type: 'currency',
             symbol: ['$', '€', '£', '¥', '₿'][Math.floor(Math.random() * 5)],
-            pulse: Math.random() * Math.PI * 2
+            pulse: Math.random() * Math.PI * 2,
+            scrollSpeed: 0.7
           };
         }
         
@@ -152,7 +216,8 @@ const Background = () => {
       };
 
       interactionZonesRef.current.forEach(zone => {
-        const zoneViewportY = zone.y - scrollYRef.current;
+        const parallaxY = zone.y - (scrollYRef.current * zone.scrollSpeed);
+        const zoneViewportY = parallaxY - scrollYRef.current;
         const isHovering = 
           event.clientX > zone.x && 
           event.clientX < zone.x + zone.width &&
@@ -168,7 +233,8 @@ const Background = () => {
       
       let clickedZone = false;
       interactionZonesRef.current.forEach(zone => {
-        const zoneViewportY = zone.y - scrollYRef.current;
+        const parallaxY = zone.y - (scrollYRef.current * zone.scrollSpeed);
+        const zoneViewportY = parallaxY - scrollYRef.current;
         const isClicking = 
           event.clientX > zone.x && 
           event.clientX < zone.x + zone.width &&
@@ -275,32 +341,39 @@ const Background = () => {
 
     // Drawing functions
     const drawEnhancedGrid = (ctx, canvas) => {
+      const scrollY = scrollYRef.current;
       ctx.strokeStyle = 'rgba(100, 116, 139, 0.1)';
       ctx.lineWidth = 1;
       
+      // Apply parallax to grid
+      const gridOffsetY = scrollY * 0.1;
+      
       for (let x = 0; x < canvas.width; x += 60) {
         ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, canvas.height);
+        ctx.moveTo(x, -gridOffsetY);
+        ctx.lineTo(x, canvas.height - gridOffsetY);
         ctx.stroke();
       }
       
       for (let y = 0; y < canvas.height; y += 60) {
         ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(canvas.width, y);
+        ctx.moveTo(0, y - gridOffsetY);
+        ctx.lineTo(canvas.width, y - gridOffsetY);
         ctx.stroke();
       }
     };
 
     const drawProminentTrendLines = (ctx, canvas, time) => {
-      // Multiple trend lines at different heights
+      const scrollY = scrollYRef.current;
+      
+      // Multiple trend lines at different heights with parallax
       ctx.beginPath();
       ctx.strokeStyle = 'rgba(74, 222, 128, 0.3)';
       ctx.lineWidth = 3;
-      ctx.moveTo(-50, 200);
+      const line1Y = 200 - (scrollY * 0.3);
+      ctx.moveTo(-50, line1Y);
       for (let x = 0; x < canvas.width + 50; x += 15) {
-        const y = 200 - Math.sin(x * 0.008 + time) * 40 - x * 0.02;
+        const y = line1Y - Math.sin(x * 0.008 + time) * 40 - x * 0.02;
         ctx.lineTo(x, y);
       }
       ctx.stroke();
@@ -308,9 +381,10 @@ const Background = () => {
       ctx.beginPath();
       ctx.strokeStyle = 'rgba(96, 165, 250, 0.25)';
       ctx.lineWidth = 2;
-      ctx.moveTo(-30, canvas.height * 0.4);
+      const line2Y = canvas.height * 0.4 - (scrollY * 0.5);
+      ctx.moveTo(-30, line2Y);
       for (let x = 0; x < canvas.width + 30; x += 12) {
-        const y = canvas.height * 0.4 + Math.cos(x * 0.01 + time * 1.2) * 80;
+        const y = line2Y + Math.cos(x * 0.01 + time * 1.2) * 80;
         ctx.lineTo(x, y);
       }
       ctx.stroke();
@@ -318,19 +392,24 @@ const Background = () => {
       ctx.beginPath();
       ctx.strokeStyle = 'rgba(168, 85, 247, 0.25)';
       ctx.lineWidth = 2;
-      ctx.moveTo(-20, canvas.height * 0.7);
+      const line3Y = canvas.height * 0.7 - (scrollY * 0.4);
+      ctx.moveTo(-20, line3Y);
       for (let x = 0; x < canvas.width + 20; x += 10) {
-        const y = canvas.height * 0.7 + Math.sin(x * 0.015 + time * 0.8) * 60;
+        const y = line3Y + Math.sin(x * 0.015 + time * 0.8) * 60;
         ctx.lineTo(x, y);
       }
       ctx.stroke();
     };
 
     const drawInteractionZones = (ctx) => {
+      const scrollY = scrollYRef.current;
+      
       interactionZonesRef.current.forEach(zone => {
-        const zoneViewportY = zone.y - scrollYRef.current;
+        const parallaxY = zone.y - (scrollY * zone.scrollSpeed);
+        const zoneViewportY = parallaxY - scrollY;
         
-        if (zoneViewportY > -zone.height && zoneViewportY < window.innerHeight) {
+        // Only draw if zone is in or near viewport
+        if (zoneViewportY > -zone.height - 100 && zoneViewportY < window.innerHeight + 100) {
           ctx.save();
           
           if (zone.hover) {
@@ -343,8 +422,8 @@ const Background = () => {
             ctx.lineWidth = 2;
           }
           
-          ctx.fillRect(zone.x, zone.y, zone.width, zone.height);
-          ctx.strokeRect(zone.x, zone.y, zone.width, zone.height);
+          ctx.fillRect(zone.x, parallaxY, zone.width, zone.height);
+          ctx.strokeRect(zone.x, parallaxY, zone.width, zone.height);
           
           ctx.fillStyle = zone.hover ? 'rgba(255, 255, 255, 0.9)' : 'rgba(255, 255, 255, 0.6)';
           ctx.font = '14px Arial';
@@ -352,7 +431,7 @@ const Background = () => {
           ctx.fillText(
             getZoneLabel(zone.type),
             zone.x + zone.width / 2,
-            zone.y + zone.height / 2
+            parallaxY + zone.height / 2
           );
           
           ctx.restore();
@@ -417,51 +496,63 @@ const Background = () => {
     };
 
     const drawProminentFinanceIndicators = (ctx, canvas, time) => {
-      // Indicators at different scroll positions
+      const scrollY = scrollYRef.current;
+      
+      // Indicators at different scroll positions with parallax
       const indicators = [
-        { text: '+24.8%', y: 150, color: 'rgba(74, 222, 128, 0.8)' },
-        { text: '+18.3%', y: 400, color: 'rgba(96, 165, 250, 0.8)' },
-        { text: '+32.1%', y: canvas.height * 0.3, color: 'rgba(168, 85, 247, 0.8)' },
-        { text: '+45.2%', y: canvas.height * 0.5, color: 'rgba(245, 158, 11, 0.8)' },
-        { text: '+28.7%', y: canvas.height * 0.7, color: 'rgba(34, 197, 94, 0.8)' },
-        { text: '+51.9%', y: canvas.height * 0.9, color: 'rgba(139, 92, 246, 0.8)' }
+        { text: '+24.8%', baseY: 150, color: 'rgba(74, 222, 128, 0.8)', speed: 0.3 },
+        { text: '+18.3%', baseY: 400, color: 'rgba(96, 165, 250, 0.8)', speed: 0.5 },
+        { text: '+32.1%', baseY: canvas.height * 0.3, color: 'rgba(168, 85, 247, 0.8)', speed: 0.7 },
+        { text: '+45.2%', baseY: canvas.height * 0.5, color: 'rgba(245, 158, 11, 0.8)', speed: 0.6 },
+        { text: '+28.7%', baseY: canvas.height * 0.7, color: 'rgba(34, 197, 94, 0.8)', speed: 0.8 },
+        { text: '+51.9%', baseY: canvas.height * 0.9, color: 'rgba(139, 92, 246, 0.8)', speed: 0.4 }
       ];
 
       indicators.forEach((indicator, index) => {
         const x = (canvas.width / (indicators.length + 1)) * (index + 1);
-        const waveY = indicator.y + Math.sin(time * 2 + index) * 30;
+        // Apply parallax effect based on scroll
+        const parallaxY = indicator.baseY - (scrollY * indicator.speed);
+        const waveY = parallaxY + Math.sin(time * 2 + index) * 30;
         
-        ctx.save();
-        ctx.globalAlpha = 0.7 + Math.sin(time * 3 + index) * 0.3;
-        ctx.fillStyle = indicator.color;
-        ctx.font = 'bold 22px Arial';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(indicator.text, x, waveY);
-        ctx.restore();
+        // Only draw if element is in or near viewport
+        if (waveY > -100 && waveY < canvas.height + 100) {
+          ctx.save();
+          ctx.globalAlpha = 0.7 + Math.sin(time * 3 + index) * 0.3;
+          ctx.fillStyle = indicator.color;
+          ctx.font = 'bold 22px Arial';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(indicator.text, x, waveY);
+          ctx.restore();
+        }
       });
 
-      // Bar charts at different positions
+      // Bar charts with parallax
       const barCharts = [
-        { y: 250, count: 6, color: 'rgba(74, 222, 128, 0.6)' },
-        { y: canvas.height * 0.35, count: 5, color: 'rgba(96, 165, 250, 0.6)' },
-        { y: canvas.height * 0.6, count: 4, color: 'rgba(168, 85, 247, 0.6)' },
-        { y: canvas.height * 0.85, count: 6, color: 'rgba(245, 158, 11, 0.6)' }
+        { baseY: 250, count: 6, color: 'rgba(74, 222, 128, 0.6)', speed: 0.4 },
+        { baseY: canvas.height * 0.35, count: 5, color: 'rgba(96, 165, 250, 0.6)', speed: 0.6 },
+        { baseY: canvas.height * 0.6, count: 4, color: 'rgba(168, 85, 247, 0.6)', speed: 0.5 },
+        { baseY: canvas.height * 0.85, count: 6, color: 'rgba(245, 158, 11, 0.6)', speed: 0.7 }
       ];
 
       barCharts.forEach((chart, chartIndex) => {
-        for (let i = 0; i < chart.count; i++) {
-          const x = 100 + i * 120;
-          const height = 50 + Math.sin(time + i + chartIndex) * 35;
-          const isPositive = i % 4 !== 0;
-          
-          ctx.fillStyle = isPositive ? chart.color : 'rgba(248, 113, 113, 0.6)';
-          ctx.fillRect(x, chart.y - height, 40, height);
-          
-          ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-          ctx.font = '11px Arial';
-          ctx.textAlign = 'center';
-          ctx.fillText(`${Math.round(height)}%`, x + 20, chart.y - height - 10);
+        const parallaxY = chart.baseY - (scrollY * chart.speed);
+        
+        // Only draw if chart is in or near viewport
+        if (parallaxY > -200 && parallaxY < canvas.height + 200) {
+          for (let i = 0; i < chart.count; i++) {
+            const x = 100 + i * 120;
+            const height = 50 + Math.sin(time + i + chartIndex) * 35;
+            const isPositive = i % 4 !== 0;
+            
+            ctx.fillStyle = isPositive ? chart.color : 'rgba(248, 113, 113, 0.6)';
+            ctx.fillRect(x, parallaxY - height, 40, height);
+            
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.font = '11px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(`${Math.round(height)}%`, x + 20, parallaxY - height - 10);
+          }
         }
       });
     };
@@ -470,7 +561,7 @@ const Background = () => {
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
-      // Create gradient background that covers entire canvas
+      // Create gradient background
       const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
       gradient.addColorStop(0, '#0f172a');
       gradient.addColorStop(0.5, '#1e293b');
@@ -481,20 +572,23 @@ const Background = () => {
 
       const time = Date.now() * 0.001;
 
-      // Draw elements
+      // Draw elements with parallax
       drawEnhancedGrid(ctx, canvas);
       drawProminentTrendLines(ctx, canvas, time);
       drawInteractionZones(ctx);
       drawProminentFinanceIndicators(ctx, canvas, time);
 
-      // Update and draw particles
+      // Update and draw particles with parallax
       particlesRef.current.forEach((particle, index) => {
         particle.pulse += 0.05;
         const pulseScale = 1 + Math.sin(particle.pulse) * 0.2;
 
+        // Apply parallax to particles
+        const particleY = particle.y - (scrollYRef.current * (particle.scrollSpeed || 0.5));
+
         if (particle.type === 'indicator' && mouseRef.current.isMoving) {
           const dx = particle.x - mouseRef.current.x;
-          const dy = particle.y - mouseRef.current.y;
+          const dy = particleY - mouseRef.current.y;
           const distance = Math.sqrt(dx * dx + dy * dy);
           
           if (distance < 150) {
@@ -522,37 +616,40 @@ const Background = () => {
           }
         }
 
-        ctx.save();
-        if (particle.type === 'burst') {
-          ctx.globalAlpha = particle.life;
-        }
-        
-        if (particle.type === 'currency') {
-          ctx.font = `${particle.size * 4 * pulseScale}px Arial`;
-          ctx.fillStyle = particle.color;
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.fillText(particle.symbol, particle.x, particle.y);
-        } else {
-          ctx.shadowColor = particle.color;
-          ctx.shadowBlur = 10 * pulseScale;
-          ctx.fillStyle = particle.color;
-          
-          if (particle.type === 'data' || particle.type === 'burst') {
-            ctx.beginPath();
-            ctx.arc(particle.x, particle.y, particle.size * pulseScale, 0, Math.PI * 2);
-            ctx.fill();
-          } else {
-            ctx.fillRect(
-              particle.x - particle.size * pulseScale / 2,
-              particle.y - particle.size * pulseScale / 2,
-              particle.size * pulseScale,
-              particle.size * pulseScale
-            );
+        // Only draw particles that are in or near viewport
+        if (particleY > -100 && particleY < canvas.height + 100) {
+          ctx.save();
+          if (particle.type === 'burst') {
+            ctx.globalAlpha = particle.life;
           }
+          
+          if (particle.type === 'currency') {
+            ctx.font = `${particle.size * 4 * pulseScale}px Arial`;
+            ctx.fillStyle = particle.color;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(particle.symbol, particle.x, particleY);
+          } else {
+            ctx.shadowColor = particle.color;
+            ctx.shadowBlur = 10 * pulseScale;
+            ctx.fillStyle = particle.color;
+            
+            if (particle.type === 'data' || particle.type === 'burst') {
+              ctx.beginPath();
+              ctx.arc(particle.x, particleY, particle.size * pulseScale, 0, Math.PI * 2);
+              ctx.fill();
+            } else {
+              ctx.fillRect(
+                particle.x - particle.size * pulseScale / 2,
+                particleY - particle.size * pulseScale / 2,
+                particle.size * pulseScale,
+                particle.size * pulseScale
+              );
+            }
+          }
+          
+          ctx.restore();
         }
-        
-        ctx.restore();
       });
 
       drawRipples(ctx);
@@ -599,5 +696,3 @@ const Background = () => {
 };
 
 export default Background;
-
-
