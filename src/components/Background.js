@@ -17,10 +17,12 @@ const Background = () => {
     
     const ctx = canvas.getContext('2d');
     
-    // Set canvas size to be much larger than viewport
+    // Set canvas size to be the full scrollable height
     const resizeCanvas = () => {
+      const totalHeight = document.documentElement.scrollHeight;
       canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight * 5; // 5x viewport height for scrolling
+      canvas.height = totalHeight; // Make canvas match the full page height
+      createInteractionZones();
     };
     
     // Scroll handling
@@ -28,13 +30,14 @@ const Background = () => {
       scrollYRef.current = window.scrollY;
     };
 
-    // Create interactive zones at different positions in the large canvas
+    // Create interactive zones at different scroll positions
     const createInteractionZones = () => {
+      const totalHeight = canvas.height;
       interactionZonesRef.current = [
-        // Top section (visible at start)
+        // Top section
         {
           x: canvas.width * 0.2,
-          y: 300, // Position in the large canvas
+          y: 300,
           width: 200,
           height: 120,
           type: 'growth-chart',
@@ -48,10 +51,10 @@ const Background = () => {
           type: 'metrics',
           hover: false
         },
-        // Middle section (visible after scrolling)
+        // Middle section
         {
           x: canvas.width * 0.1,
-          y: window.innerHeight + 400,
+          y: totalHeight * 0.3,
           width: 220,
           height: 100,
           type: 'analytics',
@@ -59,16 +62,16 @@ const Background = () => {
         },
         {
           x: canvas.width * 0.6,
-          y: window.innerHeight + 600,
+          y: totalHeight * 0.4,
           width: 200,
           height: 120,
           type: 'performance',
           hover: false
         },
-        // Bottom section (visible after more scrolling)
+        // Bottom section
         {
           x: canvas.width * 0.3,
-          y: window.innerHeight * 3 + 200,
+          y: totalHeight * 0.7,
           width: 180,
           height: 100,
           type: 'revenue',
@@ -76,7 +79,7 @@ const Background = () => {
         },
         {
           x: canvas.width * 0.7,
-          y: window.innerHeight * 3 + 400,
+          y: totalHeight * 0.8,
           width: 200,
           height: 120,
           type: 'growth',
@@ -85,20 +88,18 @@ const Background = () => {
       ];
     };
 
-    // Create finance-themed particles distributed throughout the large canvas
+    // Create finance-themed particles distributed throughout the canvas
     const createParticles = () => {
       const particles = [];
-      const particleCount = 150;
+      const particleCount = 200;
       
       for (let i = 0; i < particleCount; i++) {
         const type = Math.random();
         let particleConfig;
         
-        // Distribute particles throughout the entire large canvas
         const particleY = Math.random() * canvas.height;
         
         if (type < 0.4) {
-          // Data points
           particleConfig = {
             x: Math.random() * canvas.width,
             y: particleY,
@@ -110,7 +111,6 @@ const Background = () => {
             pulse: Math.random() * Math.PI * 2
           };
         } else if (type < 0.7) {
-          // Floating indicators
           particleConfig = {
             x: Math.random() * canvas.width,
             y: particleY,
@@ -122,7 +122,6 @@ const Background = () => {
             pulse: Math.random() * Math.PI * 2
           };
         } else {
-          // Currency symbols
           particleConfig = {
             x: Math.random() * canvas.width,
             y: particleY,
@@ -143,17 +142,15 @@ const Background = () => {
 
     // Mouse interactions
     const handleMouseMove = (event) => {
-      // Mouse position relative to the visible part of canvas
-      const canvasY = event.clientY + scrollYRef.current;
+      const absoluteY = event.clientY + scrollYRef.current;
       
       mouseRef.current = {
         x: event.clientX,
-        y: canvasY,
+        y: absoluteY,
         viewportY: event.clientY,
         isMoving: true
       };
 
-      // Check interaction zones
       interactionZonesRef.current.forEach(zone => {
         const zoneViewportY = zone.y - scrollYRef.current;
         const isHovering = 
@@ -167,9 +164,8 @@ const Background = () => {
     };
 
     const handleMouseClick = (event) => {
-      const canvasY = event.clientY + scrollYRef.current;
+      const absoluteY = event.clientY + scrollYRef.current;
       
-      // Check if clicking on interaction zones
       let clickedZone = false;
       interactionZonesRef.current.forEach(zone => {
         const zoneViewportY = zone.y - scrollYRef.current;
@@ -186,7 +182,6 @@ const Background = () => {
         }
       });
 
-      // If not clicking on a zone, create background click effects
       if (!clickedZone) {
         createRipple(event.clientX, event.clientY, 'background');
         createExplosion(event.clientX, event.clientY, 'background');
@@ -241,7 +236,7 @@ const Background = () => {
         
         particlesRef.current.push({
           x: x,
-          y: y + scrollYRef.current, // Position in the large canvas
+          y: y + scrollYRef.current,
           size: 2 + Math.random() * 3,
           speedX: Math.cos(angle) * speed,
           speedY: Math.sin(angle) * speed,
@@ -280,10 +275,9 @@ const Background = () => {
 
     // Drawing functions
     const drawEnhancedGrid = (ctx, canvas) => {
-      ctx.strokeStyle = 'rgba(100, 116, 139, 0.15)';
+      ctx.strokeStyle = 'rgba(100, 116, 139, 0.1)';
       ctx.lineWidth = 1;
       
-      // Vertical lines throughout entire large canvas
       for (let x = 0; x < canvas.width; x += 60) {
         ctx.beginPath();
         ctx.moveTo(x, 0);
@@ -291,7 +285,6 @@ const Background = () => {
         ctx.stroke();
       }
       
-      // Horizontal lines throughout entire large canvas
       for (let y = 0; y < canvas.height; y += 60) {
         ctx.beginPath();
         ctx.moveTo(0, y);
@@ -301,9 +294,7 @@ const Background = () => {
     };
 
     const drawProminentTrendLines = (ctx, canvas, time) => {
-      // Multiple trend lines at different heights in the large canvas
-      
-      // Top section trend line
+      // Multiple trend lines at different heights
       ctx.beginPath();
       ctx.strokeStyle = 'rgba(74, 222, 128, 0.3)';
       ctx.lineWidth = 3;
@@ -314,24 +305,22 @@ const Background = () => {
       }
       ctx.stroke();
 
-      // Middle section trend line
       ctx.beginPath();
       ctx.strokeStyle = 'rgba(96, 165, 250, 0.25)';
       ctx.lineWidth = 2;
-      ctx.moveTo(-30, window.innerHeight + 300);
+      ctx.moveTo(-30, canvas.height * 0.4);
       for (let x = 0; x < canvas.width + 30; x += 12) {
-        const y = window.innerHeight + 300 + Math.cos(x * 0.01 + time * 1.2) * 80;
+        const y = canvas.height * 0.4 + Math.cos(x * 0.01 + time * 1.2) * 80;
         ctx.lineTo(x, y);
       }
       ctx.stroke();
 
-      // Bottom section trend line
       ctx.beginPath();
       ctx.strokeStyle = 'rgba(168, 85, 247, 0.25)';
       ctx.lineWidth = 2;
-      ctx.moveTo(-20, window.innerHeight * 3 + 400);
+      ctx.moveTo(-20, canvas.height * 0.7);
       for (let x = 0; x < canvas.width + 20; x += 10) {
-        const y = window.innerHeight * 3 + 400 + Math.sin(x * 0.015 + time * 0.8) * 60;
+        const y = canvas.height * 0.7 + Math.sin(x * 0.015 + time * 0.8) * 60;
         ctx.lineTo(x, y);
       }
       ctx.stroke();
@@ -341,8 +330,7 @@ const Background = () => {
       interactionZonesRef.current.forEach(zone => {
         const zoneViewportY = zone.y - scrollYRef.current;
         
-        // Only draw if zone is visible in viewport
-        if (zoneViewportY > -zone.height && zoneViewportY < canvas.height) {
+        if (zoneViewportY > -zone.height && zoneViewportY < window.innerHeight) {
           ctx.save();
           
           if (zone.hover) {
@@ -358,7 +346,6 @@ const Background = () => {
           ctx.fillRect(zone.x, zone.y, zone.width, zone.height);
           ctx.strokeRect(zone.x, zone.y, zone.width, zone.height);
           
-          // Zone label
           ctx.fillStyle = zone.hover ? 'rgba(255, 255, 255, 0.9)' : 'rgba(255, 255, 255, 0.6)';
           ctx.font = '14px Arial';
           ctx.textAlign = 'center';
@@ -430,15 +417,14 @@ const Background = () => {
     };
 
     const drawProminentFinanceIndicators = (ctx, canvas, time) => {
-      // Indicators at different positions in the large canvas
+      // Indicators at different scroll positions
       const indicators = [
         { text: '+24.8%', y: 150, color: 'rgba(74, 222, 128, 0.8)' },
         { text: '+18.3%', y: 400, color: 'rgba(96, 165, 250, 0.8)' },
-        { text: '+32.1%', y: window.innerHeight + 200, color: 'rgba(168, 85, 247, 0.8)' },
-        { text: '+45.2%', y: window.innerHeight + 500, color: 'rgba(245, 158, 11, 0.8)' },
-        { text: '+28.7%', y: window.innerHeight * 2 + 300, color: 'rgba(34, 197, 94, 0.8)' },
-        { text: '+51.9%', y: window.innerHeight * 3 + 100, color: 'rgba(139, 92, 246, 0.8)' },
-        { text: '+67.3%', y: window.innerHeight * 4 + 200, color: 'rgba(239, 68, 68, 0.8)' }
+        { text: '+32.1%', y: canvas.height * 0.3, color: 'rgba(168, 85, 247, 0.8)' },
+        { text: '+45.2%', y: canvas.height * 0.5, color: 'rgba(245, 158, 11, 0.8)' },
+        { text: '+28.7%', y: canvas.height * 0.7, color: 'rgba(34, 197, 94, 0.8)' },
+        { text: '+51.9%', y: canvas.height * 0.9, color: 'rgba(139, 92, 246, 0.8)' }
       ];
 
       indicators.forEach((indicator, index) => {
@@ -455,13 +441,12 @@ const Background = () => {
         ctx.restore();
       });
 
-      // Bar charts at different positions in the large canvas
+      // Bar charts at different positions
       const barCharts = [
         { y: 250, count: 6, color: 'rgba(74, 222, 128, 0.6)' },
-        { y: window.innerHeight + 350, count: 5, color: 'rgba(96, 165, 250, 0.6)' },
-        { y: window.innerHeight * 2 + 250, count: 4, color: 'rgba(168, 85, 247, 0.6)' },
-        { y: window.innerHeight * 3 + 350, count: 6, color: 'rgba(245, 158, 11, 0.6)' },
-        { y: window.innerHeight * 4 + 250, count: 5, color: 'rgba(34, 197, 94, 0.6)' }
+        { y: canvas.height * 0.35, count: 5, color: 'rgba(96, 165, 250, 0.6)' },
+        { y: canvas.height * 0.6, count: 4, color: 'rgba(168, 85, 247, 0.6)' },
+        { y: canvas.height * 0.85, count: 6, color: 'rgba(245, 158, 11, 0.6)' }
       ];
 
       barCharts.forEach((chart, chartIndex) => {
@@ -473,7 +458,6 @@ const Background = () => {
           ctx.fillStyle = isPositive ? chart.color : 'rgba(248, 113, 113, 0.6)';
           ctx.fillRect(x, chart.y - height, 40, height);
           
-          // Bar value
           ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
           ctx.font = '11px Arial';
           ctx.textAlign = 'center';
@@ -486,36 +470,28 @@ const Background = () => {
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
-      // Apply scroll translation - this is the key part!
-      ctx.save();
-      ctx.translate(0, -scrollYRef.current);
-      
-      // Create vibrant finance gradient background for entire large canvas
+      // Create gradient background
       const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
       gradient.addColorStop(0, '#0f172a');
-      gradient.addColorStop(0.2, '#1e293b');
-      gradient.addColorStop(0.5, '#334155');
-      gradient.addColorStop(0.8, '#475569');
-      gradient.addColorStop(1, '#64748b');
+      gradient.addColorStop(0.5, '#1e293b');
+      gradient.addColorStop(1, '#334155');
       
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       const time = Date.now() * 0.001;
 
-      // Draw elements in the large canvas
+      // Draw elements
       drawEnhancedGrid(ctx, canvas);
       drawProminentTrendLines(ctx, canvas, time);
       drawInteractionZones(ctx);
       drawProminentFinanceIndicators(ctx, canvas, time);
 
-      // Update and draw particles in the large canvas
+      // Update and draw particles
       particlesRef.current.forEach((particle, index) => {
-        // Pulsing effect
         particle.pulse += 0.05;
         const pulseScale = 1 + Math.sin(particle.pulse) * 0.2;
 
-        // Mouse attraction (adjusted for scroll)
         if (particle.type === 'indicator' && mouseRef.current.isMoving) {
           const dx = particle.x - mouseRef.current.x;
           const dy = particle.y - mouseRef.current.y;
@@ -528,19 +504,16 @@ const Background = () => {
           }
         }
 
-        // Movement for non-data particles
         if (particle.type !== 'data' && particle.type !== 'burst') {
           particle.x += particle.speedX;
           particle.y += particle.speedY;
 
-          // Boundary check for entire large canvas
           if (particle.x < -particle.size) particle.x = canvas.width + particle.size;
           if (particle.x > canvas.width + particle.size) particle.x = -particle.size;
           if (particle.y < -particle.size) particle.y = canvas.height + particle.size;
           if (particle.y > canvas.height + particle.size) particle.y = -particle.size;
         }
 
-        // Life decay for burst particles
         if (particle.type === 'burst') {
           particle.life -= particle.decay;
           if (particle.life <= 0) {
@@ -549,7 +522,6 @@ const Background = () => {
           }
         }
 
-        // Draw particle
         ctx.save();
         if (particle.type === 'burst') {
           ctx.globalAlpha = particle.life;
@@ -583,9 +555,6 @@ const Background = () => {
         ctx.restore();
       });
 
-      ctx.restore(); // Restore transformation
-
-      // Draw click effects (these are viewport-relative, not canvas-relative)
       drawRipples(ctx);
       drawExplosions(ctx);
       
@@ -594,7 +563,6 @@ const Background = () => {
 
     // Initialize
     resizeCanvas();
-    createInteractionZones();
     particlesRef.current = createParticles();
     
     // Event listeners
