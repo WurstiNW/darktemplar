@@ -3,173 +3,43 @@ import '../styles/components.css';
 
 const Background = () => {
   const canvasRef = useRef(null);
-  const containerRef = useRef(null);
   const animationRef = useRef(null);
   const particlesRef = useRef([]);
   const mouseRef = useRef({ x: 0, y: 0, isMoving: false });
-  const interactionZonesRef = useRef([]);
   const scrollYRef = useRef(0);
   const ripplesRef = useRef([]);
   const explosionsRef = useRef([]);
-  const parallaxElementsRef = useRef([]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const container = containerRef.current;
-    if (!canvas || !container) return;
+    if (!canvas) return;
     
     const ctx = canvas.getContext('2d');
     
-    // Set canvas and container size to be the full scrollable height
+    // Set canvas size to match viewport
     const resizeCanvas = () => {
-      const totalHeight = document.documentElement.scrollHeight;
       canvas.width = window.innerWidth;
-      canvas.height = totalHeight;
-      
-      // Also set container height to match
-      container.style.height = `${totalHeight}px`;
-      
-      createInteractionZones();
-      createParallaxElements();
+      canvas.height = window.innerHeight;
     };
     
-    // Scroll handling
+    // Scroll handling for parallax effects
     const handleScroll = () => {
       scrollYRef.current = window.scrollY;
     };
 
-    // Create interactive zones at different scroll positions
-    const createInteractionZones = () => {
-      const totalHeight = canvas.height;
-      interactionZonesRef.current = [
-        // Top section
-        {
-          x: canvas.width * 0.2,
-          y: 300,
-          width: 200,
-          height: 120,
-          type: 'growth-chart',
-          hover: false,
-          scrollSpeed: 0.7
-        },
-        {
-          x: canvas.width * 0.7,
-          y: 500,
-          width: 180,
-          height: 100,
-          type: 'metrics',
-          hover: false,
-          scrollSpeed: 0.5
-        },
-        // Middle section
-        {
-          x: canvas.width * 0.1,
-          y: totalHeight * 0.3,
-          width: 220,
-          height: 100,
-          type: 'analytics',
-          hover: false,
-          scrollSpeed: 0.8
-        },
-        {
-          x: canvas.width * 0.6,
-          y: totalHeight * 0.4,
-          width: 200,
-          height: 120,
-          type: 'performance',
-          hover: false,
-          scrollSpeed: 0.6
-        },
-        // Bottom section
-        {
-          x: canvas.width * 0.3,
-          y: totalHeight * 0.7,
-          width: 180,
-          height: 100,
-          type: 'revenue',
-          hover: false,
-          scrollSpeed: 0.9
-        },
-        {
-          x: canvas.width * 0.7,
-          y: totalHeight * 0.8,
-          width: 200,
-          height: 120,
-          type: 'growth',
-          hover: false,
-          scrollSpeed: 0.4
-        }
-      ];
-    };
-
-    // Create parallax elements at different scroll positions
-    const createParallaxElements = () => {
-      const totalHeight = canvas.height;
-      parallaxElementsRef.current = [
-        // Top section elements
-        {
-          type: 'bar-chart',
-          x: canvas.width * 0.1,
-          y: 200,
-          width: 300,
-          height: 150,
-          scrollSpeed: 0.7,
-          data: [65, 80, 45, 90, 75, 60]
-        },
-        {
-          type: 'trend-line',
-          x: canvas.width * 0.6,
-          y: 300,
-          width: 400,
-          height: 100,
-          scrollSpeed: 0.5,
-          points: []
-        },
-        // Middle section elements
-        {
-          type: 'metrics',
-          x: canvas.width * 0.2,
-          y: totalHeight * 0.4,
-          width: 200,
-          height: 100,
-          scrollSpeed: 0.8,
-          values: ['+24.8%', '+18.3%', '+32.1%']
-        },
-        {
-          type: 'growth-chart',
-          x: canvas.width * 0.65,
-          y: totalHeight * 0.5,
-          width: 250,
-          height: 120,
-          scrollSpeed: 0.6
-        },
-        // Bottom section elements  
-        {
-          type: 'analytics',
-          x: canvas.width * 0.3,
-          y: totalHeight * 0.8,
-          width: 280,
-          height: 130,
-          scrollSpeed: 0.9
-        }
-      ];
-    };
-
-    // Create finance-themed particles distributed throughout the canvas
+    // Create finance-themed particles
     const createParticles = () => {
       const particles = [];
-      const particleCount = 200;
+      const particleCount = 150;
       
       for (let i = 0; i < particleCount; i++) {
         const type = Math.random();
         let particleConfig;
         
-        const particleY = Math.random() * canvas.height;
-        
         if (type < 0.4) {
           particleConfig = {
             x: Math.random() * canvas.width,
-            y: particleY,
+            y: Math.random() * canvas.height,
             size: Math.random() * 3 + 2,
             speedX: 0,
             speedY: 0,
@@ -181,7 +51,7 @@ const Background = () => {
         } else if (type < 0.7) {
           particleConfig = {
             x: Math.random() * canvas.width,
-            y: particleY,
+            y: Math.random() * canvas.height,
             size: Math.random() * 2 + 1,
             speedX: (Math.random() - 0.5) * 0.3,
             speedY: (Math.random() - 0.5) * 0.3,
@@ -193,7 +63,7 @@ const Background = () => {
         } else {
           particleConfig = {
             x: Math.random() * canvas.width,
-            y: particleY,
+            y: Math.random() * canvas.height,
             size: Math.random() * 2 + 1.5,
             speedX: (Math.random() - 0.5) * 0.4,
             speedY: (Math.random() - 0.5) * 0.4,
@@ -212,60 +82,21 @@ const Background = () => {
 
     // Mouse interactions
     const handleMouseMove = (event) => {
-      const absoluteY = event.clientY + scrollYRef.current;
-      
       mouseRef.current = {
         x: event.clientX,
-        y: absoluteY,
-        viewportY: event.clientY,
+        y: event.clientY,
         isMoving: true
       };
-
-      interactionZonesRef.current.forEach(zone => {
-        const parallaxY = zone.y - (scrollYRef.current * zone.scrollSpeed);
-        const zoneViewportY = parallaxY - scrollYRef.current;
-        const isHovering = 
-          event.clientX > zone.x && 
-          event.clientX < zone.x + zone.width &&
-          event.clientY > zoneViewportY && 
-          event.clientY < zoneViewportY + zone.height;
-        
-        zone.hover = isHovering;
-      });
     };
 
     const handleMouseClick = (event) => {
-      const absoluteY = event.clientY + scrollYRef.current;
-      
-      let clickedZone = false;
-      interactionZonesRef.current.forEach(zone => {
-        const parallaxY = zone.y - (scrollYRef.current * zone.scrollSpeed);
-        const zoneViewportY = parallaxY - scrollYRef.current;
-        const isClicking = 
-          event.clientX > zone.x && 
-          event.clientX < zone.x + zone.width &&
-          event.clientY > zoneViewportY && 
-          event.clientY < zoneViewportY + zone.height;
-        
-        if (isClicking) {
-          clickedZone = true;
-          createRipple(event.clientX, event.clientY, zone.type);
-          createExplosion(event.clientX, event.clientY, zone.type);
-        }
-      });
-
-      if (!clickedZone) {
-        createRipple(event.clientX, event.clientY, 'background');
-        createExplosion(event.clientX, event.clientY, 'background');
-        createParticleBurst(event.clientX, event.clientY);
-      }
+      createRipple(event.clientX, event.clientY, 'background');
+      createExplosion(event.clientX, event.clientY, 'background');
+      createParticleBurst(event.clientX, event.clientY);
     };
 
     const handleMouseLeave = () => {
       mouseRef.current.isMoving = false;
-      interactionZonesRef.current.forEach(zone => {
-        zone.hover = false;
-      });
     };
 
     // Ripple effect for clicks
@@ -274,7 +105,7 @@ const Background = () => {
         x, y,
         radius: 0,
         maxRadius: 120,
-        color: getRippleColor(type),
+        color: 'rgba(255, 255, 255, 0.3)',
         active: true,
         life: 1
       });
@@ -292,7 +123,7 @@ const Background = () => {
           vx: Math.cos(angle) * speed,
           vy: Math.sin(angle) * speed,
           size: 3 + Math.random() * 4,
-          color: getExplosionColor(type),
+          color: `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.8)`,
           life: 1,
           decay: 0.02 + Math.random() * 0.02
         });
@@ -308,7 +139,7 @@ const Background = () => {
         
         particlesRef.current.push({
           x: x,
-          y: y + scrollYRef.current,
+          y: y,
           size: 2 + Math.random() * 3,
           speedX: Math.cos(angle) * speed,
           speedY: Math.sin(angle) * speed,
@@ -318,30 +149,6 @@ const Background = () => {
           life: 1,
           decay: 0.01
         });
-      }
-    };
-
-    const getRippleColor = (type) => {
-      switch(type) {
-        case 'growth-chart': return 'rgba(74, 222, 128, 0.4)';
-        case 'metrics': return 'rgba(96, 165, 250, 0.4)';
-        case 'analytics': return 'rgba(168, 85, 247, 0.4)';
-        case 'performance': return 'rgba(245, 158, 11, 0.4)';
-        case 'revenue': return 'rgba(34, 197, 94, 0.4)';
-        case 'growth': return 'rgba(139, 92, 246, 0.4)';
-        default: return 'rgba(255, 255, 255, 0.3)';
-      }
-    };
-
-    const getExplosionColor = (type) => {
-      switch(type) {
-        case 'growth-chart': return 'rgba(74, 222, 128, 0.8)';
-        case 'metrics': return 'rgba(96, 165, 250, 0.8)';
-        case 'analytics': return 'rgba(168, 85, 247, 0.8)';
-        case 'performance': return 'rgba(245, 158, 11, 0.8)';
-        case 'revenue': return 'rgba(34, 197, 94, 0.8)';
-        case 'growth': return 'rgba(139, 92, 246, 0.8)';
-        default: return `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.8)`;
       }
     };
 
@@ -387,7 +194,7 @@ const Background = () => {
       ctx.beginPath();
       ctx.strokeStyle = 'rgba(96, 165, 250, 0.25)';
       ctx.lineWidth = 2;
-      const line2Y = canvas.height * 0.4 - (scrollY * 0.5);
+      const line2Y = canvas.height * 0.5 - (scrollY * 0.5);
       ctx.moveTo(-30, line2Y);
       for (let x = 0; x < canvas.width + 30; x += 12) {
         const y = line2Y + Math.cos(x * 0.01 + time * 1.2) * 80;
@@ -398,63 +205,13 @@ const Background = () => {
       ctx.beginPath();
       ctx.strokeStyle = 'rgba(168, 85, 247, 0.25)';
       ctx.lineWidth = 2;
-      const line3Y = canvas.height * 0.7 - (scrollY * 0.4);
+      const line3Y = canvas.height * 0.8 - (scrollY * 0.4);
       ctx.moveTo(-20, line3Y);
       for (let x = 0; x < canvas.width + 20; x += 10) {
         const y = line3Y + Math.sin(x * 0.015 + time * 0.8) * 60;
         ctx.lineTo(x, y);
       }
       ctx.stroke();
-    };
-
-    const drawInteractionZones = (ctx) => {
-      const scrollY = scrollYRef.current;
-      
-      interactionZonesRef.current.forEach(zone => {
-        const parallaxY = zone.y - (scrollY * zone.scrollSpeed);
-        const zoneViewportY = parallaxY - scrollY;
-        
-        // Only draw if zone is in or near viewport
-        if (zoneViewportY > -zone.height - 100 && zoneViewportY < window.innerHeight + 100) {
-          ctx.save();
-          
-          if (zone.hover) {
-            ctx.fillStyle = 'rgba(74, 222, 128, 0.2)';
-            ctx.strokeStyle = 'rgba(74, 222, 128, 0.8)';
-            ctx.lineWidth = 3;
-          } else {
-            ctx.fillStyle = 'rgba(96, 165, 250, 0.1)';
-            ctx.strokeStyle = 'rgba(96, 165, 250, 0.4)';
-            ctx.lineWidth = 2;
-          }
-          
-          ctx.fillRect(zone.x, parallaxY, zone.width, zone.height);
-          ctx.strokeRect(zone.x, parallaxY, zone.width, zone.height);
-          
-          ctx.fillStyle = zone.hover ? 'rgba(255, 255, 255, 0.9)' : 'rgba(255, 255, 255, 0.6)';
-          ctx.font = '14px Arial';
-          ctx.textAlign = 'center';
-          ctx.fillText(
-            getZoneLabel(zone.type),
-            zone.x + zone.width / 2,
-            parallaxY + zone.height / 2
-          );
-          
-          ctx.restore();
-        }
-      });
-    };
-
-    const getZoneLabel = (type) => {
-      switch(type) {
-        case 'growth-chart': return 'Growth Chart';
-        case 'metrics': return 'Key Metrics';
-        case 'analytics': return 'Analytics';
-        case 'performance': return 'Performance';
-        case 'revenue': return 'Revenue';
-        case 'growth': return 'Growth Stats';
-        default: return 'Interactive Zone';
-      }
     };
 
     const drawRipples = (ctx) => {
@@ -508,10 +265,8 @@ const Background = () => {
       const indicators = [
         { text: '+24.8%', baseY: 150, color: 'rgba(74, 222, 128, 0.8)', speed: 0.3 },
         { text: '+18.3%', baseY: 400, color: 'rgba(96, 165, 250, 0.8)', speed: 0.5 },
-        { text: '+32.1%', baseY: canvas.height * 0.3, color: 'rgba(168, 85, 247, 0.8)', speed: 0.7 },
-        { text: '+45.2%', baseY: canvas.height * 0.5, color: 'rgba(245, 158, 11, 0.8)', speed: 0.6 },
-        { text: '+28.7%', baseY: canvas.height * 0.7, color: 'rgba(34, 197, 94, 0.8)', speed: 0.8 },
-        { text: '+51.9%', baseY: canvas.height * 0.9, color: 'rgba(139, 92, 246, 0.8)', speed: 0.4 }
+        { text: '+32.1%', baseY: canvas.height * 0.6, color: 'rgba(168, 85, 247, 0.8)', speed: 0.7 },
+        { text: '+45.2%', baseY: canvas.height * 0.8, color: 'rgba(245, 158, 11, 0.8)', speed: 0.6 }
       ];
 
       indicators.forEach((indicator, index) => {
@@ -536,9 +291,8 @@ const Background = () => {
       // Bar charts with parallax
       const barCharts = [
         { baseY: 250, count: 6, color: 'rgba(74, 222, 128, 0.6)', speed: 0.4 },
-        { baseY: canvas.height * 0.35, count: 5, color: 'rgba(96, 165, 250, 0.6)', speed: 0.6 },
-        { baseY: canvas.height * 0.6, count: 4, color: 'rgba(168, 85, 247, 0.6)', speed: 0.5 },
-        { baseY: canvas.height * 0.85, count: 6, color: 'rgba(245, 158, 11, 0.6)', speed: 0.7 }
+        { baseY: canvas.height * 0.4, count: 5, color: 'rgba(96, 165, 250, 0.6)', speed: 0.6 },
+        { baseY: canvas.height * 0.7, count: 4, color: 'rgba(168, 85, 247, 0.6)', speed: 0.5 }
       ];
 
       barCharts.forEach((chart, chartIndex) => {
@@ -581,7 +335,6 @@ const Background = () => {
       // Draw elements with parallax
       drawEnhancedGrid(ctx, canvas);
       drawProminentTrendLines(ctx, canvas, time);
-      drawInteractionZones(ctx);
       drawProminentFinanceIndicators(ctx, canvas, time);
 
       // Update and draw particles with parallax
@@ -691,7 +444,7 @@ const Background = () => {
   }, []);
 
   return (
-    <div ref={containerRef} className="background-container">
+    <div className="background-container">
       <canvas 
         ref={canvasRef} 
         className="finance-background"
