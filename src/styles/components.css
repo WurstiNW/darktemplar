@@ -1119,6 +1119,7 @@ section {
   pointer-events: auto;
   transition: all 0.3s ease;
   transform-origin: center;
+  min-width: fit-content;
 }
 
 /* Category-based colors */
@@ -1219,6 +1220,7 @@ section {
   z-index: 2;
   transition: all 0.3s ease;
 }
+
 
 
 
