@@ -14,12 +14,17 @@ const Background = () => {
     if (!canvas) return;
     
     const ctx = canvas.getContext('2d');
+    const container = canvas.parentElement;
     
-    // Set canvas size to match the full document height
+    // Set canvas size to be the full scrollable height
     const resizeCanvas = () => {
       const totalHeight = document.documentElement.scrollHeight;
       canvas.width = window.innerWidth;
       canvas.height = totalHeight;
+      
+      // Also set container height to match
+      container.style.height = totalHeight + 'px';
+      
       createInteractionZones();
     };
     
