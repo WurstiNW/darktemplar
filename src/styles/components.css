@@ -44,14 +44,11 @@ main {
 /* About Section */
 .about-section {
   background: transparent !important;
-  backdrop-filter: blur(20px) saturate(160%);
-  border-radius: 20px;
+  backdrop-filter: none;
+  border-radius: 0;
   margin: 2rem auto;
   border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.1),
-    0 4px 16px rgba(31, 38, 135, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  box-shadow: none;
   position: relative;
   z-index: 1;
 }
@@ -1076,5 +1073,6 @@ section {
     padding: 2rem 0 !important;
   }
 }
+
 
 
