@@ -14,17 +14,11 @@ const Background = () => {
     if (!canvas) return;
     
     const ctx = canvas.getContext('2d');
-    const container = canvas.parentElement;
     
-    // Set canvas size to be the full scrollable height
+    // Set canvas size to be larger than viewport to allow scrolling
     const resizeCanvas = () => {
-      const totalHeight = document.documentElement.scrollHeight;
       canvas.width = window.innerWidth;
-      canvas.height = totalHeight;
-      
-      // Also set container height to match
-      container.style.height = totalHeight + 'px';
-      
+      canvas.height = window.innerHeight * 4; // 4x viewport height for scrolling content
       createInteractionZones();
     };
     
@@ -35,7 +29,6 @@ const Background = () => {
 
     // Create interactive zones at different scroll positions
     const createInteractionZones = () => {
-      const totalHeight = canvas.height;
       interactionZonesRef.current = [
         // Top section (visible at start)
         {
@@ -57,7 +50,7 @@ const Background = () => {
         // Middle section (visible after scrolling ~1000px)
         {
           x: canvas.width * 0.1,
-          y: 1200,
+          y: window.innerHeight + 400,
           width: 220,
           height: 100,
           type: 'analytics',
@@ -65,7 +58,7 @@ const Background = () => {
         },
         {
           x: canvas.width * 0.6,
-          y: 1500,
+          y: window.innerHeight + 600,
           width: 200,
           height: 120,
           type: 'performance',
@@ -74,7 +67,7 @@ const Background = () => {
         // Bottom section (visible after scrolling ~2500px)
         {
           x: canvas.width * 0.3,
-          y: 2500,
+          y: window.innerHeight * 2 + 300,
           width: 180,
           height: 100,
           type: 'revenue',
@@ -82,7 +75,7 @@ const Background = () => {
         },
         {
           x: canvas.width * 0.7,
-          y: 2800,
+          y: window.innerHeight * 2 + 500,
           width: 200,
           height: 120,
           type: 'growth',
@@ -112,7 +105,8 @@ const Background = () => {
             speedY: 0,
             color: `rgba(74, 222, 128, ${Math.random() * 0.5 + 0.3})`,
             type: 'data',
-            pulse: Math.random() * Math.PI * 2
+            pulse: Math.random() * Math.PI * 2,
+            originalY: particleY // Store original position for parallax
           };
         } else if (type < 0.7) {
           particleConfig = {
@@ -123,7 +117,8 @@ const Background = () => {
             speedY: (Math.random() - 0.5) * 0.3,
             color: `rgba(96, 165, 250, ${Math.random() * 0.4 + 0.2})`,
             type: 'indicator',
-            pulse: Math.random() * Math.PI * 2
+            pulse: Math.random() * Math.PI * 2,
+            originalY: particleY
           };
         } else {
           particleConfig = {
@@ -135,7 +130,8 @@ const Background = () => {
             color: `rgba(248, 113, 113, ${Math.random() * 0.4 + 0.2})`,
             type: 'currency',
             symbol: ['$', '€', '£', '¥', '₿'][Math.floor(Math.random() * 5)],
-            pulse: Math.random() * Math.PI * 2
+            pulse: Math.random() * Math.PI * 2,
+            originalY: particleY
           };
         }
         
@@ -175,34 +171,34 @@ const Background = () => {
       });
     };
 
-    // Drawing functions
-    const drawEnhancedGrid = (ctx, canvas) => {
+    // Drawing functions - NOW WITH SCROLL TRANSLATION
+    const drawEnhancedGrid = (ctx, canvas, offsetY) => {
       ctx.strokeStyle = 'rgba(100, 116, 139, 0.1)';
       ctx.lineWidth = 1;
       
       for (let x = 0; x < canvas.width; x += 60) {
         ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, canvas.height);
+        ctx.moveTo(x, -offsetY);
+        ctx.lineTo(x, canvas.height - offsetY);
         ctx.stroke();
       }
       
       for (let y = 0; y < canvas.height; y += 60) {
         ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(canvas.width, y);
+        ctx.moveTo(0, y - offsetY);
+        ctx.lineTo(canvas.width, y - offsetY);
         ctx.stroke();
       }
     };
 
-    const drawProminentTrendLines = (ctx, canvas, time) => {
+    const drawProminentTrendLines = (ctx, canvas, time, offsetY) => {
       // Multiple trend lines at different heights
       ctx.beginPath();
       ctx.strokeStyle = 'rgba(74, 222, 128, 0.3)';
       ctx.lineWidth = 3;
-      ctx.moveTo(-50, 200);
+      ctx.moveTo(-50, 200 - offsetY);
       for (let x = 0; x < canvas.width + 50; x += 15) {
-        const y = 200 - Math.sin(x * 0.008 + time) * 40 - x * 0.02;
+        const y = 200 - Math.sin(x * 0.008 + time) * 40 - x * 0.02 - offsetY;
         ctx.lineTo(x, y);
       }
       ctx.stroke();
@@ -210,9 +206,9 @@ const Background = () => {
       ctx.beginPath();
       ctx.strokeStyle = 'rgba(96, 165, 250, 0.25)';
       ctx.lineWidth = 2;
-      ctx.moveTo(-30, 1200);
+      ctx.moveTo(-30, 1200 - offsetY);
       for (let x = 0; x < canvas.width + 30; x += 12) {
-        const y = 1200 + Math.cos(x * 0.01 + time * 1.2) * 80;
+        const y = 1200 + Math.cos(x * 0.01 + time * 1.2) * 80 - offsetY;
         ctx.lineTo(x, y);
       }
       ctx.stroke();
@@ -220,17 +216,17 @@ const Background = () => {
       ctx.beginPath();
       ctx.strokeStyle = 'rgba(168, 85, 247, 0.25)';
       ctx.lineWidth = 2;
-      ctx.moveTo(-20, 2500);
+      ctx.moveTo(-20, 2500 - offsetY);
       for (let x = 0; x < canvas.width + 20; x += 10) {
-        const y = 2500 + Math.sin(x * 0.015 + time * 0.8) * 60;
+        const y = 2500 + Math.sin(x * 0.015 + time * 0.8) * 60 - offsetY;
         ctx.lineTo(x, y);
       }
       ctx.stroke();
     };
 
-    const drawInteractionZones = (ctx) => {
+    const drawInteractionZones = (ctx, offsetY) => {
       interactionZonesRef.current.forEach(zone => {
-        const zoneViewportY = zone.y - scrollYRef.current;
+        const zoneViewportY = zone.y - offsetY;
         
         // Only draw if zone is visible in viewport
         if (zoneViewportY > -zone.height && zoneViewportY < window.innerHeight) {
@@ -246,8 +242,8 @@ const Background = () => {
             ctx.lineWidth = 2;
           }
           
-          ctx.fillRect(zone.x, zone.y, zone.width, zone.height);
-          ctx.strokeRect(zone.x, zone.y, zone.width, zone.height);
+          ctx.fillRect(zone.x, zone.y - offsetY, zone.width, zone.height);
+          ctx.strokeRect(zone.x, zone.y - offsetY, zone.width, zone.height);
           
           ctx.fillStyle = zone.hover ? 'rgba(255, 255, 255, 0.9)' : 'rgba(255, 255, 255, 0.6)';
           ctx.font = '14px Arial';
@@ -255,7 +251,7 @@ const Background = () => {
           ctx.fillText(
             getZoneLabel(zone.type),
             zone.x + zone.width / 2,
-            zone.y + zone.height / 2
+            zone.y - offsetY + zone.height / 2
           );
           
           ctx.restore();
@@ -275,29 +271,34 @@ const Background = () => {
       }
     };
 
-    const drawProminentFinanceIndicators = (ctx, canvas, time) => {
+    const drawProminentFinanceIndicators = (ctx, canvas, time, offsetY) => {
       // Indicators at different scroll positions
       const indicators = [
         { text: '+24.8%', y: 150, color: 'rgba(74, 222, 128, 0.8)' },
         { text: '+18.3%', y: 400, color: 'rgba(96, 165, 250, 0.8)' },
-        { text: '+32.1%', y: 1300, color: 'rgba(168, 85, 247, 0.8)' },
+        { text: '+32.1%', y: 1200, color: 'rgba(168, 85, 247, 0.8)' },
         { text: '+45.2%', y: 1600, color: 'rgba(245, 158, 11, 0.8)' },
-        { text: '+28.7%', y: 2600, color: 'rgba(34, 197, 94, 0.8)' },
+        { text: '+28.7%', y: 2500, color: 'rgba(34, 197, 94, 0.8)' },
         { text: '+51.9%', y: 2900, color: 'rgba(139, 92, 246, 0.8)' }
       ];
 
       indicators.forEach((indicator, index) => {
-        const x = (canvas.width / (indicators.length + 1)) * (index + 1);
-        const waveY = indicator.y + Math.sin(time * 2 + index) * 30;
+        const viewportY = indicator.y - offsetY;
         
-        ctx.save();
-        ctx.globalAlpha = 0.7 + Math.sin(time * 3 + index) * 0.3;
-        ctx.fillStyle = indicator.color;
-        ctx.font = 'bold 22px Arial';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(indicator.text, x, waveY);
-        ctx.restore();
+        // Only draw if indicator is visible in viewport
+        if (viewportY > -50 && viewportY < window.innerHeight + 50) {
+          const x = (canvas.width / (indicators.length + 1)) * (index + 1);
+          const waveY = viewportY + Math.sin(time * 2 + index) * 30;
+          
+          ctx.save();
+          ctx.globalAlpha = 0.7 + Math.sin(time * 3 + index) * 0.3;
+          ctx.fillStyle = indicator.color;
+          ctx.font = 'bold 22px Arial';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(indicator.text, x, waveY);
+          ctx.restore();
+        }
       });
 
       // Bar charts at different positions
@@ -308,27 +309,35 @@ const Background = () => {
       ];
 
       barCharts.forEach((chart, chartIndex) => {
-        for (let i = 0; i < chart.count; i++) {
-          const x = 100 + i * 120;
-          const height = 50 + Math.sin(time + i + chartIndex) * 35;
-          const isPositive = i % 4 !== 0;
-          
-          ctx.fillStyle = isPositive ? chart.color : 'rgba(248, 113, 113, 0.6)';
-          ctx.fillRect(x, chart.y - height, 40, height);
-          
-          ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-          ctx.font = '11px Arial';
-          ctx.textAlign = 'center';
-          ctx.fillText(`${Math.round(height)}%`, x + 20, chart.y - height - 10);
+        const viewportY = chart.y - offsetY;
+        
+        // Only draw if bar chart is visible in viewport
+        if (viewportY > -100 && viewportY < window.innerHeight + 100) {
+          for (let i = 0; i < chart.count; i++) {
+            const x = 100 + i * 120;
+            const height = 50 + Math.sin(time + i + chartIndex) * 35;
+            const isPositive = i % 4 !== 0;
+            
+            ctx.fillStyle = isPositive ? chart.color : 'rgba(248, 113, 113, 0.6)';
+            ctx.fillRect(x, viewportY - height, 40, height);
+            
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.font = '11px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(`${Math.round(height)}%`, x + 20, viewportY - height - 10);
+          }
         }
       });
     };
 
-    // Animation
+    // Animation with scroll translation
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
-      // Create gradient background that spans entire canvas
+      // Apply scroll translation to move the background
+      const scrollOffset = scrollYRef.current;
+      
+      // Create gradient background
       const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
       gradient.addColorStop(0, '#0f172a');
       gradient.addColorStop(0.3, '#1e293b');
@@ -340,38 +349,41 @@ const Background = () => {
 
       const time = Date.now() * 0.001;
 
-      // Draw elements
-      drawEnhancedGrid(ctx, canvas);
-      drawProminentTrendLines(ctx, canvas, time);
-      drawInteractionZones(ctx);
-      drawProminentFinanceIndicators(ctx, canvas, time);
+      // Draw elements with scroll offset
+      drawEnhancedGrid(ctx, canvas, scrollOffset);
+      drawProminentTrendLines(ctx, canvas, time, scrollOffset);
+      drawInteractionZones(ctx, scrollOffset);
+      drawProminentFinanceIndicators(ctx, canvas, time, scrollOffset);
 
-      // Update and draw particles
+      // Update and draw particles with scroll consideration
       particlesRef.current.forEach((particle, index) => {
         particle.pulse += 0.05;
         const pulseScale = 1 + Math.sin(particle.pulse) * 0.2;
 
+        // Calculate display position with scroll offset
+        const displayY = particle.originalY - scrollOffset;
+
         if (particle.type === 'indicator' && mouseRef.current.isMoving) {
           const dx = particle.x - mouseRef.current.x;
-          const dy = particle.y - mouseRef.current.y;
+          const dy = displayY - mouseRef.current.viewportY;
           const distance = Math.sqrt(dx * dx + dy * dy);
           
           if (distance < 150) {
             const force = (150 - distance) / 150;
             particle.x += (dx / distance) * force * 2;
-            particle.y += (dy / distance) * force * 2;
+            particle.originalY += (dy / distance) * force * 2;
           }
         }
 
         if (particle.type !== 'data') {
           particle.x += particle.speedX;
-          particle.y += particle.speedY;
+          particle.originalY += particle.speedY;
 
           // Boundary check for entire canvas
           if (particle.x < -particle.size) particle.x = canvas.width + particle.size;
           if (particle.x > canvas.width + particle.size) particle.x = -particle.size;
-          if (particle.y < -particle.size) particle.y = canvas.height + particle.size;
-          if (particle.y > canvas.height + particle.size) particle.y = -particle.size;
+          if (particle.originalY < -particle.size) particle.originalY = canvas.height + particle.size;
+          if (particle.originalY > canvas.height + particle.size) particle.originalY = -particle.size;
         }
 
         ctx.save();
@@ -381,7 +393,7 @@ const Background = () => {
           ctx.fillStyle = particle.color;
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
-          ctx.fillText(particle.symbol, particle.x, particle.y);
+          ctx.fillText(particle.symbol, particle.x, displayY);
         } else {
           ctx.shadowColor = particle.color;
           ctx.shadowBlur = 10 * pulseScale;
@@ -389,12 +401,12 @@ const Background = () => {
           
           if (particle.type === 'data') {
             ctx.beginPath();
-            ctx.arc(particle.x, particle.y, particle.size * pulseScale, 0, Math.PI * 2);
+            ctx.arc(particle.x, displayY, particle.size * pulseScale, 0, Math.PI * 2);
             ctx.fill();
           } else {
             ctx.fillRect(
               particle.x - particle.size * pulseScale / 2,
-              particle.y - particle.size * pulseScale / 2,
+              displayY - particle.size * pulseScale / 2,
               particle.size * pulseScale,
               particle.size * pulseScale
             );
