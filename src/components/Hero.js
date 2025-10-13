@@ -7,8 +7,46 @@ const Hero = () => {
     window.open('/cv.pdf', '_blank');
   };
 
-  // Get skill names for the floating tags
-  const skillNames = cvData.getSkillsArray().slice(0, 8);
+  // Get skills from specific categories without overlapping
+  const getNonOverlappingSkills = () => {
+    const categories = ['Sprachen', 'Stärken', 'IT'];
+    const allSkills = [];
+    
+    categories.forEach(category => {
+      if (cvData.skills[category]) {
+        // Take up to 4 skills from each category to prevent overcrowding
+        const categorySkills = cvData.skills[category]
+          .slice(0, 4)
+          .map(skill => ({
+            name: skill.name,
+            category: category
+          }));
+        allSkills.push(...categorySkills);
+      }
+    });
+    
+    return allSkills.slice(0, 12); // Limit total to prevent overcrowding
+  };
+
+  const skillsToShow = getNonOverlappingSkills();
+
+  // Predefined positions to prevent overlapping
+  const positions = [
+    { left: '10%', top: '15%' },   // Top left
+    { left: '30%', top: '10%' },   // Top middle-left
+    { left: '50%', top: '15%' },   // Top middle-right
+    { left: '70%', top: '10%' },   // Top right
+    
+    { left: '15%', top: '35%' },   // Middle left
+    { left: '35%', top: '40%' },   // Middle middle-left
+    { left: '65%', top: '35%' },   // Middle middle-right
+    { left: '85%', top: '40%' },   // Middle right
+    
+    { left: '10%', top: '65%' },   // Bottom left
+    { left: '30%', top: '70%' },   // Bottom middle-left
+    { left: '50%', top: '65%' },   // Bottom middle
+    { left: '70%', top: '70%' }    // Bottom right
+  ];
 
   return (
     <section id="hero" className="hero-section">
@@ -37,19 +75,20 @@ const Hero = () => {
           </div>
         </div>
         <div className="hero-visual">
-          {/* Replace the floating card with floating tags */}
           <div className="floating-tags-container">
-            {skillNames.map((skill, index) => (
+            {skillsToShow.map((skill, index) => (
               <div 
                 key={index} 
                 className="floating-tech-tag"
                 style={{
-                  animationDelay: `${index * 0.5}s`,
-                  left: `${20 + (index % 3) * 30}%`,
-                  top: `${20 + Math.floor(index / 3) * 25}%`
+                  animationDelay: `${index * 0.3}s`,
+                  left: positions[index]?.left || '50%',
+                  top: positions[index]?.top || '50%',
+                  zIndex: index + 1
                 }}
+                data-category={skill.category}
               >
-                {skill}
+                {skill.name}
               </div>
             ))}
           </div>
