@@ -1085,18 +1085,8 @@ section {
 /* Floating Tags Container */
 .floating-tags-container {
   position: relative;
-  width: 400px;
-  height: 400px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* Floating Tags Container */
-.floating-tags-container {
-  position: relative;
-  width: 500px;
-  height: 500px;
+  width: 600px;
+  height: 600px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1220,6 +1210,7 @@ section {
   z-index: 2;
   transition: all 0.3s ease;
 }
+
 
 
 
