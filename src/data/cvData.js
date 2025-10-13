@@ -62,7 +62,7 @@ export const cvData = {
     ],
     "Stärken": [
       { name: "Ergebnisorientiert", percentage: 100 },
-      { name: "Flexibel", percentage: 100 },
+      { name: "Flexibilität", percentage: 100 },
       { name: "Lernbereitschaft", percentage: 100 },
       { name: "Motivation", percentage: 100 }
     ],
@@ -155,6 +155,7 @@ export const cvData = {
     }
   ]
 };
+
 
 
 
