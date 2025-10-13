@@ -651,12 +651,9 @@ main {
   position: fixed;
   top: 0;
   width: 100%;
-  background: transparent !important;
-  backdrop-filter: blur(40px) saturate(180%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+  background: none;
   z-index: 1000;
   transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
 
 .header.scrolled {
@@ -1242,6 +1239,7 @@ section {
   -webkit-background-clip: initial !important;
   -webkit-text-fill-color: initial !important;
 }
+
 
 
 
