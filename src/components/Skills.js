@@ -1,14 +1,14 @@
 import React from 'react';
 import { cvData } from '../data/cvData';
-import { FaLanguage, FaLaptopCode, FaHeart, FaStar } from 'react-icons/fa';
+import { FaLanguage, FaLaptopCode, FaHeart, FaStar, FaLightbulb } from 'react-icons/fa';
 
 const Skills = () => {
   const getIcon = (category) => {
     switch (category) {
-      case 'Languages': return <FaLanguage />;
+      case 'Sprachen': return <FaLanguage />;
       case 'IT': return <FaLaptopCode />;
       case 'Hobbies': return <FaHeart />;
-      case 'Strengths': return <FaStar />;
+      case 'Stärken': return <FaStar />;
       default: return <FaStar />;
     }
   };
@@ -31,18 +31,18 @@ const Skills = () => {
 
   // Check if category should show any text
   const shouldShowText = (category) => {
-    return category === 'Languages' || category === 'IT';
+    return category === 'Sprachen' || category === 'IT';
   };
 
   // Check if category is Hobbies or Strengths
   const isSimpleCategory = (category) => {
-    return category === 'Hobbies' || category === 'Strengths';
+    return category === 'Hobbies' || category === 'Stärken';
   };
 
   return (
     <section id="skills" className="skills-section">
       <div className="container">
-        <h2>Skills</h2>
+        <h2><FaLightbulb className="section-icon" /> Skills</h2>
         <div className="skills-grid">
           {Object.entries(cvData.skills).map(([category, skills]) => (
             <div key={category} className={`skill-category ${isSimpleCategory(category) ? 'simple-category' : ''}`}>
@@ -90,4 +90,5 @@ const Skills = () => {
 };
 
 export default Skills;
+
 
