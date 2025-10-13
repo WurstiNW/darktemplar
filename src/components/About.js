@@ -7,7 +7,7 @@ const About = () => {
     <section id="about" className="about-section">
       <div className="container">
         <h2>
-          <FaUser className="section-icon" /> About Me
+          <FaUser className="section-icon" /> Über mich
         </h2>
         <div className="about-grid">
           <div className="about-content">
@@ -19,21 +19,21 @@ const About = () => {
                 <div className="info-item">
                   <FaMapMarkerAlt className="info-icon" />
                   <div>
-                    <span className="info-label">Location</span>
+                    <span className="info-label">Adresse</span>
                     <span className="info-value">{cvData.personal.location}</span>
                   </div>
                 </div>
                 <div className="info-item">
                   <FaPhone className="info-icon" />
                   <div>
-                    <span className="info-label">Phone</span>
+                    <span className="info-label">Telefon</span>
                     <span className="info-value">{cvData.personal.phone}</span>
                   </div>
                 </div>
                 <div className="info-item">
                   <FaEnvelope className="info-icon" />
                   <div>
-                    <span className="info-label">Email</span>
+                    <span className="info-label">E-Mail</span>
                     <span className="info-value">{cvData.personal.email}</span>
                   </div>
                 </div>
@@ -48,7 +48,7 @@ const About = () => {
             </div>
           </div>
           <div className="education-section">
-            <h3>Education</h3>
+            <h3>Ausbildung</h3>
             <div className="education-list">
               {cvData.education.map((edu, index) => (
                 <div key={index} className="education-item">
@@ -64,5 +64,6 @@ const About = () => {
     </section>
   );
 };
+
 
 export default About;
