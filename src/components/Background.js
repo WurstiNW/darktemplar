@@ -3,6 +3,7 @@ import '../styles/components.css';
 
 const Background = () => {
   const canvasRef = useRef(null);
+  const containerRef = useRef(null);
   const animationRef = useRef(null);
   const particlesRef = useRef([]);
   const mouseRef = useRef({ x: 0, y: 0, isMoving: false });
@@ -14,15 +15,20 @@ const Background = () => {
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    const container = containerRef.current;
+    if (!canvas || !container) return;
     
     const ctx = canvas.getContext('2d');
     
-    // Set canvas size to be the full scrollable height
+    // Set canvas and container size to be the full scrollable height
     const resizeCanvas = () => {
       const totalHeight = document.documentElement.scrollHeight;
       canvas.width = window.innerWidth;
-      canvas.height = totalHeight; // Make canvas match the full page height
+      canvas.height = totalHeight;
+      
+      // Also set container height to match
+      container.style.height = `${totalHeight}px`;
+      
       createInteractionZones();
       createParallaxElements();
     };
@@ -685,7 +691,7 @@ const Background = () => {
   }, []);
 
   return (
-    <div className="background-container">
+    <div ref={containerRef} className="background-container">
       <canvas 
         ref={canvasRef} 
         className="finance-background"
