@@ -15,22 +15,11 @@ const Background = () => {
     
     const ctx = canvas.getContext('2d');
     
-    // Set canvas size to be the full scrollable height
+    // Set canvas size to match the full document height
     const resizeCanvas = () => {
-      // Get the full document height
-      const body = document.body;
-      const html = document.documentElement;
-      const totalHeight = Math.max(
-        body.scrollHeight, 
-        body.offsetHeight, 
-        html.clientHeight, 
-        html.scrollHeight, 
-        html.offsetHeight
-      );
-      
+      const totalHeight = document.documentElement.scrollHeight;
       canvas.width = window.innerWidth;
       canvas.height = totalHeight;
-      console.log('Canvas resized to:', canvas.width, 'x', canvas.height);
       createInteractionZones();
     };
     
@@ -42,8 +31,6 @@ const Background = () => {
     // Create interactive zones at different scroll positions
     const createInteractionZones = () => {
       const totalHeight = canvas.height;
-      console.log('Creating zones for height:', totalHeight);
-      
       interactionZonesRef.current = [
         // Top section (visible at start)
         {
@@ -62,7 +49,7 @@ const Background = () => {
           type: 'metrics',
           hover: false
         },
-        // Middle section (around 1000px scroll)
+        // Middle section (visible after scrolling ~1000px)
         {
           x: canvas.width * 0.1,
           y: 1200,
@@ -79,7 +66,7 @@ const Background = () => {
           type: 'performance',
           hover: false
         },
-        // Bottom section (around 2500px scroll)
+        // Bottom section (visible after scrolling ~2500px)
         {
           x: canvas.width * 0.3,
           y: 2500,
@@ -415,22 +402,17 @@ const Background = () => {
       animationRef.current = requestAnimationFrame(animate);
     };
 
-    // Initialize with a small delay to ensure DOM is ready
-    const init = () => {
-      resizeCanvas();
-      particlesRef.current = createParticles();
-      
-      // Event listeners
-      window.addEventListener('resize', resizeCanvas);
-      window.addEventListener('scroll', handleScroll);
-      window.addEventListener('mousemove', handleMouseMove);
-      window.addEventListener('mouseleave', handleMouseLeave);
+    // Initialize
+    resizeCanvas();
+    particlesRef.current = createParticles();
+    
+    // Event listeners
+    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseleave', handleMouseLeave);
 
-      animate();
-    };
-
-    // Wait a bit for the DOM to be fully ready
-    setTimeout(init, 100);
+    animate();
 
     // Cleanup
     return () => {
