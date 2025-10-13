@@ -6,16 +6,16 @@
 }
 
 :root {
-  --primary-color: #667eea;
-  --primary-dark: #764ba2;
-  --secondary-color: #f093fb;
-  --text-primary: #1a202c;
-  --text-secondary: #4a5568;
+  --primary-color: #2563eb;    /* Professional blue */
+  --primary-dark: #1d4ed8;     /* Darker blue */
+  --secondary-color: #059669;  /* Professional green */
+  --text-primary: #1e293b;     /* Dark blue-gray */
+  --text-secondary: #475569;   /* Medium blue-gray */
   --bg-primary: #ffffff;
-  --bg-secondary: #f7fafc;
+  --bg-secondary: #f8fafc;     /* Light blue-gray */
   --border-color: #e2e8f0;
   --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --gradient: linear-gradient(135deg, #2563eb 0%, #059669 100%);
 }
 
 html, body {
@@ -424,5 +424,6 @@ html {
   background: var(--text-primary);
 
 }
+
 
 
