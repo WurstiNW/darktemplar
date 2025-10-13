@@ -17,6 +17,7 @@
   height: 300vh; 
   transition: transform 0.1s ease-out;
   pointer-events: none;
+}
 
 .background-overlay {
   position: absolute;
@@ -1224,6 +1225,7 @@ section {
   min-height: 50vh; /* Ensure sections have enough height */
   padding: 4rem 2rem;
 }
+
 
 
 
