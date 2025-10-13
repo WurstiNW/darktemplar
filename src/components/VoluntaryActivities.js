@@ -25,7 +25,7 @@ const VoluntaryActivities = () => {
                 {activity.technologies.map((tech, index) => (
                   <span key={index} className="tech-tag">{tech}</span>
                 ))}
-              </div>/}
+              </div>
             </div>
           ))}
         </div>
@@ -35,3 +35,4 @@ const VoluntaryActivities = () => {
 };
 
 export default VoluntaryActivities;
+
