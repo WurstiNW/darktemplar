@@ -1059,7 +1059,6 @@ section {
   }
 }
 
-/* Add to components.css */
 .form-success {
   background: #10b981;
   color: white;
@@ -1093,6 +1092,16 @@ section {
   align-items: center;
 }
 
+/* Floating Tags Container */
+.floating-tags-container {
+  position: relative;
+  width: 500px;
+  height: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 /* Individual Floating Tech Tags */
 .floating-tech-tag {
   position: absolute;
@@ -1105,28 +1114,87 @@ section {
   font-weight: 600;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  animation: float-tag 6s ease-in-out infinite;
+  animation: float-tag 8s ease-in-out infinite;
   white-space: nowrap;
-  z-index: 1;
+  pointer-events: auto;
+  transition: all 0.3s ease;
+  transform-origin: center;
 }
 
-/* Floating animation for tags */
+/* Category-based colors */
+.floating-tech-tag[data-category="Sprachen"] {
+  border-left: 4px solid #667eea;
+}
+
+.floating-tech-tag[data-category="Stärken"] {
+  border-left: 4px solid #f093fb;
+}
+
+.floating-tech-tag[data-category="IT"] {
+  border-left: 4px solid #4fd1c7;
+}
+
+/* Floating animation for tags*/
 @keyframes float-tag {
   0%, 100% { 
     transform: translate(0, 0) rotate(0deg) scale(1);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
   }
   25% { 
-    transform: translate(-10px, -15px) rotate(-2deg) scale(1.05);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+    transform: translate(-5px, -8px) rotate(-1deg) scale(1.02);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
   }
   50% { 
-    transform: translate(5px, -20px) rotate(2deg) scale(1.02);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+    transform: translate(3px, -10px) rotate(1deg) scale(1.01);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
   }
   75% { 
-    transform: translate(-5px, -10px) rotate(-1deg) scale(1.03);
-    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
+    transform: translate(-3px, -6px) rotate(-0.5deg) scale(1.015);
+    box-shadow: 0 9px 26px rgba(0, 0, 0, 0.16);
+  }
+}
+
+/* Staggered animations for visual interest */
+.floating-tech-tag:nth-child(odd) {
+  animation: float-tag 9s ease-in-out infinite;
+}
+
+.floating-tech-tag:nth-child(even) {
+  animation: float-tag 10s ease-in-out infinite;
+}
+
+.floating-tech-tag:nth-child(3n) {
+  animation: float-tag 11s ease-in-out infinite;
+}
+
+/* Hover effects */
+.floating-tech-tag:hover {
+  transform: scale(1.15) !important;
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 15px 40px rgba(99, 102, 241, 0.3);
+  z-index: 100 !important;
+  transition: all 0.3s ease;
+}
+
+/* Ensure tags stay within bounds */
+.floating-tech-tag {
+  max-width: 120px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  text-align: center;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .floating-tags-container {
+    width: 300px;
+    height: 300px;
+  }
+  
+  .floating-tech-tag {
+    font-size: 0.8rem;
+    padding: 0.5rem 1rem;
+    max-width: 100px;
   }
 }
 
@@ -1152,19 +1220,7 @@ section {
   transition: all 0.3s ease;
 }
 
-/* Alternative: Minimal transparent version */
-.floating-tech-tag.minimal {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: white;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-}
 
-.floating-tech-tag.minimal:hover {
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-}
 
 
 
