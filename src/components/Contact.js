@@ -10,6 +10,9 @@ const Contact = () => {
     message: ''
   });
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState('');
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -17,12 +20,32 @@ const Contact = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // For Netlify forms, you'd use their form handling
-    // This is a basic implementation
-    const mailtoLink = `mailto:${cvData.personal.email}?subject=${encodeURIComponent(formData.subject)}&body=${encodeURIComponent(`Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage: ${formData.message}`)}`;
-    window.location.href = mailtoLink;
+    setIsSubmitting(true);
+    setSubmitStatus('');
+
+    try {
+      const response = await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          'form-name': 'contact',
+          ...formData
+        }).toString()
+      });
+
+      if (response.ok) {
+        setSubmitStatus('success');
+        setFormData({ name: '', email: '', subject: '', message: '' });
+      } else {
+        setSubmitStatus('error');
+      }
+    } catch (error) {
+      setSubmitStatus('error');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -34,7 +57,7 @@ const Contact = () => {
             <h3>Let's Connect</h3>
             <p>
               I'm always open to discussing new opportunities, interesting projects, 
-              or just having a chat.
+              or just having a chat about technology and development.
             </p>
             
             <div className="contact-methods">
@@ -53,11 +76,19 @@ const Contact = () => {
                   <span className="method-value">{cvData.personal.linkedin}</span>
                 </div>
               </a>
-
+              
             </div>
           </div>
 
-          <form className="contact-form" onSubmit={handleSubmit}>
+          <form 
+            className="contact-form" 
+            onSubmit={handleSubmit}
+            name="contact"
+            method="POST"
+            data-netlify="true"
+          >
+            <input type="hidden" name="form-name" value="contact" />
+            
             <div className="form-group">
               <input
                 type="text"
@@ -98,10 +129,27 @@ const Contact = () => {
                 required
               ></textarea>
             </div>
-            <button type="submit" className="btn btn-primary">
+            
+            <button 
+              type="submit" 
+              className="btn btn-primary"
+              disabled={isSubmitting}
+            >
               <FaPaperPlane className="btn-icon" />
-              Send Message
+              {isSubmitting ? 'Sending...' : 'Send Message'}
             </button>
+
+            {submitStatus === 'success' && (
+              <div className="form-success">
+                Thank you! Your message has been sent successfully.
+              </div>
+            )}
+            
+            {submitStatus === 'error' && (
+              <div className="form-error">
+                Sorry, there was an error sending your message. Please try again or email me directly.
+              </div>
+            )}
           </form>
         </div>
       </div>
@@ -109,6 +157,4 @@ const Contact = () => {
   );
 };
 
-
 export default Contact;
-
