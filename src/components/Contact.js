@@ -53,14 +53,7 @@ const Contact = () => {
                   <span className="method-value">{cvData.personal.linkedin}</span>
                 </div>
               </a>
-              
-              <a href={`https://${cvData.personal.github}`} target="_blank" rel="noopener noreferrer" className="contact-method">
-                <FaGithub className="contact-icon" />
-                <div>
-                  <span className="method-label">GitHub</span>
-                  <span className="method-value">{cvData.personal.github}</span>
-                </div>
-              </a>
+
             </div>
           </div>
 
@@ -115,5 +108,6 @@ const Contact = () => {
     </section>
   );
 };
+
 
 export default Contact;
