@@ -10,6 +10,7 @@ const Background = () => {
   const scrollYRef = useRef(0);
   const ripplesRef = useRef([]);
   const explosionsRef = useRef([]);
+  const sparklesRef = useRef([]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -21,7 +22,7 @@ const Background = () => {
     const resizeCanvas = () => {
       const totalHeight = document.documentElement.scrollHeight;
       canvas.width = window.innerWidth;
-      canvas.height = totalHeight; // Make canvas match the full page height
+      canvas.height = totalHeight;
       createInteractionZones();
     };
     
@@ -179,13 +180,17 @@ const Background = () => {
           clickedZone = true;
           createRipple(event.clientX, event.clientY, zone.type);
           createExplosion(event.clientX, event.clientY, zone.type);
+          createSparkles(event.clientX, event.clientY, zone.type);
+          createParticleBurst(event.clientX, event.clientY, zone.type);
         }
       });
 
       if (!clickedZone) {
         createRipple(event.clientX, event.clientY, 'background');
         createExplosion(event.clientX, event.clientY, 'background');
-        createParticleBurst(event.clientX, event.clientY);
+        createSparkles(event.clientX, event.clientY, 'background');
+        createParticleBurst(event.clientX, event.clientY, 'background');
+        createWaveEffect(event.clientX, event.clientY);
       }
     };
 
@@ -201,67 +206,120 @@ const Background = () => {
       ripplesRef.current.push({
         x, y,
         radius: 0,
-        maxRadius: 120,
+        maxRadius: 150,
         color: getRippleColor(type),
         active: true,
-        life: 1
+        life: 1,
+        speed: 8 + Math.random() * 4
       });
     };
 
     // Explosion effect for clicks
     const createExplosion = (x, y, type) => {
-      const particleCount = 8;
+      const particleCount = 12;
       for (let i = 0; i < particleCount; i++) {
         const angle = (i / particleCount) * Math.PI * 2;
-        const speed = 2 + Math.random() * 3;
+        const speed = 2 + Math.random() * 4;
         
         explosionsRef.current.push({
           x, y,
           vx: Math.cos(angle) * speed,
           vy: Math.sin(angle) * speed,
-          size: 3 + Math.random() * 4,
+          size: 2 + Math.random() * 5,
           color: getExplosionColor(type),
           life: 1,
-          decay: 0.02 + Math.random() * 0.02
+          decay: 0.015 + Math.random() * 0.02,
+          rotation: Math.random() * Math.PI * 2,
+          rotationSpeed: (Math.random() - 0.5) * 0.2
+        });
+      }
+    };
+
+    // Sparkle effect for clicks
+    const createSparkles = (x, y, type) => {
+      const sparkleCount = 8;
+      for (let i = 0; i < sparkleCount; i++) {
+        const angle = (i / sparkleCount) * Math.PI * 2;
+        const distance = 20 + Math.random() * 40;
+        
+        sparklesRef.current.push({
+          x: x + Math.cos(angle) * distance,
+          y: y + Math.sin(angle) * distance,
+          startX: x,
+          startY: y,
+          size: 1 + Math.random() * 3,
+          color: getSparkleColor(type),
+          life: 1,
+          decay: 0.03 + Math.random() * 0.02,
+          phase: Math.random() * Math.PI * 2
         });
       }
     };
 
     // Particle burst for background clicks
-    const createParticleBurst = (x, y) => {
-      const burstCount = 12;
+    const createParticleBurst = (x, y, type) => {
+      const burstCount = 15;
       for (let i = 0; i < burstCount; i++) {
         const angle = (i / burstCount) * Math.PI * 2;
-        const speed = 1 + Math.random() * 2;
+        const speed = 1 + Math.random() * 3;
         
         particlesRef.current.push({
           x: x,
           y: y + scrollYRef.current,
-          size: 2 + Math.random() * 3,
+          size: 1 + Math.random() * 4,
           speedX: Math.cos(angle) * speed,
           speedY: Math.sin(angle) * speed,
-          color: `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.7)`,
+          color: getParticleColor(type),
           type: 'burst',
           pulse: Math.random() * Math.PI * 2,
           life: 1,
-          decay: 0.01
+          decay: 0.008 + Math.random() * 0.01,
+          rotation: Math.random() * Math.PI * 2
+        });
+      }
+    };
+
+    // Wave effect for background clicks
+    const createWaveEffect = (x, y) => {
+      // Create multiple concentric waves
+      for (let i = 0; i < 3; i++) {
+        ripplesRef.current.push({
+          x, y,
+          radius: i * 20,
+          maxRadius: 200 + i * 50,
+          color: `rgba(255, 255, 255, ${0.2 - i * 0.05})`,
+          active: true,
+          life: 1 - i * 0.2,
+          speed: 6 + i * 2
         });
       }
     };
 
     const getRippleColor = (type) => {
       switch(type) {
-        case 'growth-chart': return 'rgba(74, 222, 128, 0.4)';
-        case 'metrics': return 'rgba(96, 165, 250, 0.4)';
-        case 'analytics': return 'rgba(168, 85, 247, 0.4)';
-        case 'performance': return 'rgba(245, 158, 11, 0.4)';
-        case 'revenue': return 'rgba(34, 197, 94, 0.4)';
-        case 'growth': return 'rgba(139, 92, 246, 0.4)';
-        default: return 'rgba(255, 255, 255, 0.3)';
+        case 'growth-chart': return 'rgba(74, 222, 128, 0.5)';
+        case 'metrics': return 'rgba(96, 165, 250, 0.5)';
+        case 'analytics': return 'rgba(168, 85, 247, 0.5)';
+        case 'performance': return 'rgba(245, 158, 11, 0.5)';
+        case 'revenue': return 'rgba(34, 197, 94, 0.5)';
+        case 'growth': return 'rgba(139, 92, 246, 0.5)';
+        default: return 'rgba(255, 255, 255, 0.4)';
       }
     };
 
     const getExplosionColor = (type) => {
+      switch(type) {
+        case 'growth-chart': return 'rgba(74, 222, 128, 0.9)';
+        case 'metrics': return 'rgba(96, 165, 250, 0.9)';
+        case 'analytics': return 'rgba(168, 85, 247, 0.9)';
+        case 'performance': return 'rgba(245, 158, 11, 0.9)';
+        case 'revenue': return 'rgba(34, 197, 94, 0.9)';
+        case 'growth': return 'rgba(139, 92, 246, 0.9)';
+        default: return `rgba(${100 + Math.random() * 155}, ${100 + Math.random() * 155}, ${100 + Math.random() * 155}, 0.9)`;
+      }
+    };
+
+    const getSparkleColor = (type) => {
       switch(type) {
         case 'growth-chart': return 'rgba(74, 222, 128, 0.8)';
         case 'metrics': return 'rgba(96, 165, 250, 0.8)';
@@ -269,7 +327,19 @@ const Background = () => {
         case 'performance': return 'rgba(245, 158, 11, 0.8)';
         case 'revenue': return 'rgba(34, 197, 94, 0.8)';
         case 'growth': return 'rgba(139, 92, 246, 0.8)';
-        default: return `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.8)`;
+        default: return 'rgba(255, 255, 255, 0.8)';
+      }
+    };
+
+    const getParticleColor = (type) => {
+      switch(type) {
+        case 'growth-chart': return 'rgba(74, 222, 128, 0.7)';
+        case 'metrics': return 'rgba(96, 165, 250, 0.7)';
+        case 'analytics': return 'rgba(168, 85, 247, 0.7)';
+        case 'performance': return 'rgba(245, 158, 11, 0.7)';
+        case 'revenue': return 'rgba(34, 197, 94, 0.7)';
+        case 'growth': return 'rgba(139, 92, 246, 0.7)';
+        default: return `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.7)`;
       }
     };
 
@@ -337,10 +407,13 @@ const Background = () => {
             ctx.fillStyle = 'rgba(74, 222, 128, 0.2)';
             ctx.strokeStyle = 'rgba(74, 222, 128, 0.8)';
             ctx.lineWidth = 3;
+            ctx.shadowColor = 'rgba(74, 222, 128, 0.5)';
+            ctx.shadowBlur = 20;
           } else {
             ctx.fillStyle = 'rgba(96, 165, 250, 0.1)';
             ctx.strokeStyle = 'rgba(96, 165, 250, 0.4)';
             ctx.lineWidth = 2;
+            ctx.shadowBlur = 0;
           }
           
           ctx.fillRect(zone.x, zone.y, zone.width, zone.height);
@@ -349,6 +422,7 @@ const Background = () => {
           ctx.fillStyle = zone.hover ? 'rgba(255, 255, 255, 0.9)' : 'rgba(255, 255, 255, 0.6)';
           ctx.font = '14px Arial';
           ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
           ctx.fillText(
             getZoneLabel(zone.type),
             zone.x + zone.width / 2,
@@ -375,8 +449,8 @@ const Background = () => {
     const drawRipples = (ctx) => {
       for (let i = ripplesRef.current.length - 1; i >= 0; i--) {
         const ripple = ripplesRef.current[i];
-        ripple.radius += 8;
-        ripple.life -= 0.02;
+        ripple.radius += ripple.speed;
+        ripple.life -= 0.015;
         
         if (ripple.radius > ripple.maxRadius || ripple.life <= 0) {
           ripplesRef.current.splice(i, 1);
@@ -384,7 +458,7 @@ const Background = () => {
         }
         
         ctx.save();
-        ctx.globalAlpha = ripple.life;
+        ctx.globalAlpha = ripple.life * (1 - ripple.radius / ripple.maxRadius);
         ctx.beginPath();
         ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2);
         ctx.strokeStyle = ripple.color;
@@ -400,6 +474,7 @@ const Background = () => {
         explosion.x += explosion.vx;
         explosion.y += explosion.vy;
         explosion.life -= explosion.decay;
+        explosion.rotation += explosion.rotationSpeed;
         
         if (explosion.life <= 0) {
           explosionsRef.current.splice(i, 1);
@@ -408,9 +483,33 @@ const Background = () => {
         
         ctx.save();
         ctx.globalAlpha = explosion.life;
+        ctx.translate(explosion.x, explosion.y);
+        ctx.rotate(explosion.rotation);
         ctx.fillStyle = explosion.color;
+        ctx.fillRect(-explosion.size/2, -explosion.size/2, explosion.size, explosion.size);
+        ctx.restore();
+      }
+    };
+
+    const drawSparkles = (ctx, time) => {
+      for (let i = sparklesRef.current.length - 1; i >= 0; i--) {
+        const sparkle = sparklesRef.current[i];
+        sparkle.life -= sparkle.decay;
+        sparkle.phase += 0.1;
+        
+        if (sparkle.life <= 0) {
+          sparklesRef.current.splice(i, 1);
+          continue;
+        }
+        
+        const scale = 1 + Math.sin(sparkle.phase) * 0.5;
+        const alpha = sparkle.life * (0.5 + Math.sin(sparkle.phase) * 0.3);
+        
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = sparkle.color;
         ctx.beginPath();
-        ctx.arc(explosion.x, explosion.y, explosion.size, 0, Math.PI * 2);
+        ctx.arc(sparkle.x, sparkle.y, sparkle.size * scale, 0, Math.PI * 2);
         ctx.fill();
         ctx.restore();
       }
@@ -555,8 +654,10 @@ const Background = () => {
         ctx.restore();
       });
 
+      // Draw click effects
       drawRipples(ctx);
       drawExplosions(ctx);
+      drawSparkles(ctx, time);
       
       animationRef.current = requestAnimationFrame(animate);
     };
