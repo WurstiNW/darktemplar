@@ -8,6 +8,10 @@ const Background = () => {
   const mouseRef = useRef({ x: 0, y: 0, isMoving: false });
   const interactionZonesRef = useRef([]);
   const scrollYRef = useRef(0);
+  const targetScrollYRef = useRef(0);
+  const ripplesRef = useRef([]);
+  const explosionsRef = useRef([]);
+  const backgroundOffsetRef = useRef(0);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -17,15 +21,13 @@ const Background = () => {
     
     // Set canvas size to be larger than viewport
     const resizeCanvas = () => {
-      // Make canvas 3x the viewport height to allow for scrolling
       canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight * 3; // Triple the height for scrolling content
-      createInteractionZones();
+      canvas.height = window.innerHeight * 4; // 4x the viewport height for more content
     };
     
-    // Update scroll position
+    // Smooth scroll handling
     const handleScroll = () => {
-      scrollYRef.current = window.scrollY;
+      targetScrollYRef.current = window.scrollY;
     };
 
     // Create interactive zones at different scroll positions
@@ -34,7 +36,7 @@ const Background = () => {
         // Top section zones
         {
           x: canvas.width * 0.2,
-          y: canvas.height * 0.1, // Near top
+          y: 300,
           width: 200,
           height: 120,
           type: 'growth-chart',
@@ -42,7 +44,7 @@ const Background = () => {
         },
         {
           x: canvas.width * 0.7,
-          y: canvas.height * 0.15, // Near top
+          y: 400,
           width: 180,
           height: 100,
           type: 'metrics',
@@ -51,7 +53,7 @@ const Background = () => {
         // Middle section zones
         {
           x: canvas.width * 0.1,
-          y: canvas.height * 0.5, // Middle
+          y: window.innerHeight + 200,
           width: 220,
           height: 100,
           type: 'analytics',
@@ -59,7 +61,7 @@ const Background = () => {
         },
         {
           x: canvas.width * 0.6,
-          y: canvas.height * 0.6, // Middle
+          y: window.innerHeight + 300,
           width: 200,
           height: 120,
           type: 'performance',
@@ -68,7 +70,7 @@ const Background = () => {
         // Bottom section zones
         {
           x: canvas.width * 0.3,
-          y: canvas.height * 0.85, // Bottom
+          y: window.innerHeight * 2 + 100,
           width: 180,
           height: 100,
           type: 'revenue',
@@ -76,7 +78,7 @@ const Background = () => {
         },
         {
           x: canvas.width * 0.7,
-          y: canvas.height * 0.9, // Bottom
+          y: window.innerHeight * 2 + 200,
           width: 200,
           height: 120,
           type: 'growth',
@@ -88,7 +90,7 @@ const Background = () => {
     // Create finance-themed particles distributed throughout the canvas
     const createParticles = () => {
       const particles = [];
-      const particleCount = 200; // Increased for larger canvas
+      const particleCount = 150;
       
       for (let i = 0; i < particleCount; i++) {
         const type = Math.random();
@@ -107,7 +109,8 @@ const Background = () => {
             speedY: 0,
             color: `rgba(74, 222, 128, ${Math.random() * 0.5 + 0.3})`,
             type: 'data',
-            pulse: Math.random() * Math.PI * 2
+            pulse: Math.random() * Math.PI * 2,
+            originalY: particleY
           };
         } else if (type < 0.7) {
           // Floating indicators
@@ -119,7 +122,8 @@ const Background = () => {
             speedY: (Math.random() - 0.5) * 0.3,
             color: `rgba(96, 165, 250, ${Math.random() * 0.4 + 0.2})`,
             type: 'indicator',
-            pulse: Math.random() * Math.PI * 2
+            pulse: Math.random() * Math.PI * 2,
+            originalY: particleY
           };
         } else {
           // Currency symbols
@@ -132,7 +136,8 @@ const Background = () => {
             color: `rgba(248, 113, 113, ${Math.random() * 0.4 + 0.2})`,
             type: 'currency',
             symbol: ['$', '€', '£', '¥', '₿'][Math.floor(Math.random() * 5)],
-            pulse: Math.random() * Math.PI * 2
+            pulse: Math.random() * Math.PI * 2,
+            originalY: particleY
           };
         }
         
@@ -141,9 +146,8 @@ const Background = () => {
       return particles;
     };
 
-    // Mouse interactions with scroll offset
+    // Mouse interactions
     const handleMouseMove = (event) => {
-      // Adjust mouse position for scroll
       const adjustedY = event.clientY + scrollYRef.current;
       
       mouseRef.current = {
@@ -155,11 +159,12 @@ const Background = () => {
 
       // Check interaction zones with scroll adjustment
       interactionZonesRef.current.forEach(zone => {
+        const zoneY = zone.y - scrollYRef.current;
         const isHovering = 
-          mouseRef.current.x > zone.x && 
-          mouseRef.current.x < zone.x + zone.width &&
-          mouseRef.current.y > zone.y && 
-          mouseRef.current.y < zone.y + zone.height;
+          event.clientX > zone.x && 
+          event.clientX < zone.x + zone.width &&
+          event.clientY > zoneY && 
+          event.clientY < zoneY + zone.height;
         
         zone.hover = isHovering;
       });
@@ -168,17 +173,29 @@ const Background = () => {
     const handleMouseClick = (event) => {
       const adjustedY = event.clientY + scrollYRef.current;
       
+      // Check if clicking on interaction zones
+      let clickedZone = false;
       interactionZonesRef.current.forEach(zone => {
+        const zoneY = zone.y - scrollYRef.current;
         const isClicking = 
           event.clientX > zone.x && 
           event.clientX < zone.x + zone.width &&
-          adjustedY > zone.y && 
-          adjustedY < zone.y + zone.height;
+          event.clientY > zoneY && 
+          event.clientY < zoneY + zone.height;
         
         if (isClicking) {
-          createRipple(event.clientX, adjustedY, zone.type);
+          clickedZone = true;
+          createRipple(event.clientX, event.clientY, zone.type);
+          createExplosion(event.clientX, event.clientY, zone.type);
         }
       });
+
+      // If not clicking on a zone, create background click effects
+      if (!clickedZone) {
+        createRipple(event.clientX, event.clientY, 'background');
+        createExplosion(event.clientX, event.clientY, 'background');
+        createParticleBurst(event.clientX, event.clientY);
+      }
     };
 
     const handleMouseLeave = () => {
@@ -189,118 +206,174 @@ const Background = () => {
     };
 
     // Ripple effect for clicks
-    const ripples = [];
     const createRipple = (x, y, type) => {
-      ripples.push({
+      ripplesRef.current.push({
         x, y,
         radius: 0,
-        maxRadius: 150,
+        maxRadius: 120,
         color: getRippleColor(type),
-        active: true
+        active: true,
+        life: 1
       });
+    };
+
+    // Explosion effect for clicks
+    const createExplosion = (x, y, type) => {
+      const particleCount = 8;
+      for (let i = 0; i < particleCount; i++) {
+        const angle = (i / particleCount) * Math.PI * 2;
+        const speed = 2 + Math.random() * 3;
+        
+        explosionsRef.current.push({
+          x, y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          size: 3 + Math.random() * 4,
+          color: getExplosionColor(type),
+          life: 1,
+          decay: 0.02 + Math.random() * 0.02
+        });
+      }
+    };
+
+    // Particle burst for background clicks
+    const createParticleBurst = (x, y) => {
+      const burstCount = 12;
+      for (let i = 0; i < burstCount; i++) {
+        const angle = (i / burstCount) * Math.PI * 2;
+        const speed = 1 + Math.random() * 2;
+        
+        particlesRef.current.push({
+          x, y,
+          size: 2 + Math.random() * 3,
+          speedX: Math.cos(angle) * speed,
+          speedY: Math.sin(angle) * speed,
+          color: `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.7)`,
+          type: 'burst',
+          pulse: Math.random() * Math.PI * 2,
+          originalY: y,
+          life: 1,
+          decay: 0.01
+        });
+      }
     };
 
     const getRippleColor = (type) => {
       switch(type) {
-        case 'growth-chart': return 'rgba(74, 222, 128, 0.3)';
-        case 'metrics': return 'rgba(96, 165, 250, 0.3)';
-        case 'analytics': return 'rgba(168, 85, 247, 0.3)';
-        case 'performance': return 'rgba(245, 158, 11, 0.3)';
-        case 'revenue': return 'rgba(34, 197, 94, 0.3)';
-        case 'growth': return 'rgba(139, 92, 246, 0.3)';
-        default: return 'rgba(96, 165, 250, 0.3)';
+        case 'growth-chart': return 'rgba(74, 222, 128, 0.4)';
+        case 'metrics': return 'rgba(96, 165, 250, 0.4)';
+        case 'analytics': return 'rgba(168, 85, 247, 0.4)';
+        case 'performance': return 'rgba(245, 158, 11, 0.4)';
+        case 'revenue': return 'rgba(34, 197, 94, 0.4)';
+        case 'growth': return 'rgba(139, 92, 246, 0.4)';
+        default: return 'rgba(255, 255, 255, 0.3)';
+      }
+    };
+
+    const getExplosionColor = (type) => {
+      switch(type) {
+        case 'growth-chart': return 'rgba(74, 222, 128, 0.8)';
+        case 'metrics': return 'rgba(96, 165, 250, 0.8)';
+        case 'analytics': return 'rgba(168, 85, 247, 0.8)';
+        case 'performance': return 'rgba(245, 158, 11, 0.8)';
+        case 'revenue': return 'rgba(34, 197, 94, 0.8)';
+        case 'growth': return 'rgba(139, 92, 246, 0.8)';
+        default: return `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.8)`;
       }
     };
 
     // Drawing functions
-    const drawEnhancedGrid = (ctx, canvas) => {
-      ctx.strokeStyle = 'rgba(100, 116, 139, 0.2)';
+    const drawEnhancedGrid = (ctx, canvas, offsetY) => {
+      ctx.strokeStyle = 'rgba(100, 116, 139, 0.15)';
       ctx.lineWidth = 1;
       
-      // Vertical lines throughout entire canvas
+      // Vertical lines
       for (let x = 0; x < canvas.width; x += 60) {
         ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, canvas.height);
+        ctx.moveTo(x, -offsetY);
+        ctx.lineTo(x, canvas.height - offsetY);
         ctx.stroke();
       }
       
-      // Horizontal lines throughout entire canvas
+      // Horizontal lines
       for (let y = 0; y < canvas.height; y += 60) {
         ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(canvas.width, y);
+        ctx.moveTo(0, y - offsetY);
+        ctx.lineTo(canvas.width, y - offsetY);
         ctx.stroke();
       }
     };
 
-    const drawProminentTrendLines = (ctx, canvas) => {
-      const time = Date.now() * 0.001;
-      
+    const drawProminentTrendLines = (ctx, canvas, offsetY, time) => {
       // Multiple trend lines at different heights
       
       // Top section trend line
       ctx.beginPath();
-      ctx.strokeStyle = 'rgba(74, 222, 128, 0.4)';
+      ctx.strokeStyle = 'rgba(74, 222, 128, 0.3)';
       ctx.lineWidth = 3;
-      ctx.moveTo(-50, canvas.height * 0.1);
+      ctx.moveTo(-50, 200 - offsetY);
       for (let x = 0; x < canvas.width + 50; x += 15) {
-        const y = canvas.height * 0.1 - Math.sin(x * 0.008 + time) * 40 - x * 0.02;
+        const y = 200 - Math.sin(x * 0.008 + time) * 40 - x * 0.02 - offsetY;
         ctx.lineTo(x, y);
       }
       ctx.stroke();
 
       // Middle section trend line
       ctx.beginPath();
-      ctx.strokeStyle = 'rgba(96, 165, 250, 0.3)';
+      ctx.strokeStyle = 'rgba(96, 165, 250, 0.25)';
       ctx.lineWidth = 2;
-      ctx.moveTo(-30, canvas.height * 0.4);
+      ctx.moveTo(-30, window.innerHeight + 300 - offsetY);
       for (let x = 0; x < canvas.width + 30; x += 12) {
-        const y = canvas.height * 0.4 + Math.cos(x * 0.01 + time * 1.2) * 80;
+        const y = window.innerHeight + 300 + Math.cos(x * 0.01 + time * 1.2) * 80 - offsetY;
         ctx.lineTo(x, y);
       }
       ctx.stroke();
 
       // Bottom section trend line
       ctx.beginPath();
-      ctx.strokeStyle = 'rgba(168, 85, 247, 0.3)';
+      ctx.strokeStyle = 'rgba(168, 85, 247, 0.25)';
       ctx.lineWidth = 2;
-      ctx.moveTo(-20, canvas.height * 0.75);
+      ctx.moveTo(-20, window.innerHeight * 2 + 400 - offsetY);
       for (let x = 0; x < canvas.width + 20; x += 10) {
-        const y = canvas.height * 0.75 + Math.sin(x * 0.015 + time * 0.8) * 60;
+        const y = window.innerHeight * 2 + 400 + Math.sin(x * 0.015 + time * 0.8) * 60 - offsetY;
         ctx.lineTo(x, y);
       }
       ctx.stroke();
     };
 
-    const drawInteractionZones = (ctx) => {
+    const drawInteractionZones = (ctx, offsetY) => {
       interactionZonesRef.current.forEach(zone => {
-        ctx.save();
+        const zoneY = zone.y - offsetY;
         
-        if (zone.hover) {
-          ctx.fillStyle = 'rgba(74, 222, 128, 0.15)';
-          ctx.strokeStyle = 'rgba(74, 222, 128, 0.6)';
-          ctx.lineWidth = 3;
-        } else {
-          ctx.fillStyle = 'rgba(96, 165, 250, 0.08)';
-          ctx.strokeStyle = 'rgba(96, 165, 250, 0.3)';
-          ctx.lineWidth = 2;
+        // Only draw if zone is visible
+        if (zoneY > -zone.height && zoneY < canvas.height) {
+          ctx.save();
+          
+          if (zone.hover) {
+            ctx.fillStyle = 'rgba(74, 222, 128, 0.2)';
+            ctx.strokeStyle = 'rgba(74, 222, 128, 0.8)';
+            ctx.lineWidth = 3;
+          } else {
+            ctx.fillStyle = 'rgba(96, 165, 250, 0.1)';
+            ctx.strokeStyle = 'rgba(96, 165, 250, 0.4)';
+            ctx.lineWidth = 2;
+          }
+          
+          ctx.fillRect(zone.x, zoneY, zone.width, zone.height);
+          ctx.strokeRect(zone.x, zoneY, zone.width, zone.height);
+          
+          // Zone label
+          ctx.fillStyle = zone.hover ? 'rgba(255, 255, 255, 0.9)' : 'rgba(255, 255, 255, 0.6)';
+          ctx.font = '14px Arial';
+          ctx.textAlign = 'center';
+          ctx.fillText(
+            getZoneLabel(zone.type),
+            zone.x + zone.width / 2,
+            zoneY + zone.height / 2
+          );
+          
+          ctx.restore();
         }
-        
-        ctx.fillRect(zone.x, zone.y, zone.width, zone.height);
-        ctx.strokeRect(zone.x, zone.y, zone.width, zone.height);
-        
-        // Zone label
-        ctx.fillStyle = zone.hover ? 'rgba(255, 255, 255, 0.9)' : 'rgba(255, 255, 255, 0.5)';
-        ctx.font = '14px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText(
-          getZoneLabel(zone.type),
-          zone.x + zone.width / 2,
-          zone.y + zone.height / 2
-        );
-        
-        ctx.restore();
       });
     };
 
@@ -317,104 +390,121 @@ const Background = () => {
     };
 
     const drawRipples = (ctx) => {
-      for (let i = ripples.length - 1; i >= 0; i--) {
-        const ripple = ripples[i];
-        ripple.radius += 4;
+      for (let i = ripplesRef.current.length - 1; i >= 0; i--) {
+        const ripple = ripplesRef.current[i];
+        ripple.radius += 8;
+        ripple.life -= 0.02;
         
-        if (ripple.radius > ripple.maxRadius) {
-          ripples.splice(i, 1);
+        if (ripple.radius > ripple.maxRadius || ripple.life <= 0) {
+          ripplesRef.current.splice(i, 1);
           continue;
         }
         
+        ctx.save();
+        ctx.globalAlpha = ripple.life;
         ctx.beginPath();
         ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2);
         ctx.strokeStyle = ripple.color;
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 3;
         ctx.stroke();
+        ctx.restore();
       }
     };
 
-    const drawProminentFinanceIndicators = (ctx, canvas, time) => {
+    const drawExplosions = (ctx) => {
+      for (let i = explosionsRef.current.length - 1; i >= 0; i--) {
+        const explosion = explosionsRef.current[i];
+        explosion.x += explosion.vx;
+        explosion.y += explosion.vy;
+        explosion.life -= explosion.decay;
+        
+        if (explosion.life <= 0) {
+          explosionsRef.current.splice(i, 1);
+          continue;
+        }
+        
+        ctx.save();
+        ctx.globalAlpha = explosion.life;
+        ctx.fillStyle = explosion.color;
+        ctx.beginPath();
+        ctx.arc(explosion.x, explosion.y, explosion.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    };
+
+    const drawProminentFinanceIndicators = (ctx, canvas, offsetY, time) => {
       // Indicators at different scroll positions
       
       // Top section indicators
-      const topPercentages = ['+24.8%', '+18.3%', '+32.1%'];
-      topPercentages.forEach((percent, index) => {
-        const x = (canvas.width / (topPercentages.length + 1)) * (index + 1);
-        const y = canvas.height * 0.05 + Math.sin(time * 0.8 + index) * 30;
-        
-        ctx.save();
-        ctx.globalAlpha = 0.7 + Math.sin(time + index) * 0.3;
-        ctx.fillStyle = 'rgba(74, 222, 128, 0.8)';
-        ctx.font = 'bold 18px Arial';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(percent, x, y);
-        ctx.restore();
-      });
-
+      drawPercentageIndicators(ctx, canvas, 150 - offsetY, ['+24.8%', '+18.3%', '+32.1%'], time, 'rgba(74, 222, 128, 0.8)');
+      
       // Middle section indicators
-      const middlePercentages = ['+45.2%', '+28.7%', '+51.9%'];
-      middlePercentages.forEach((percent, index) => {
-        const x = (canvas.width / (middlePercentages.length + 1)) * (index + 1);
-        const y = canvas.height * 0.45 + Math.cos(time * 1.2 + index) * 40;
-        
-        ctx.save();
-        ctx.globalAlpha = 0.7 + Math.cos(time * 1.5 + index) * 0.3;
-        ctx.fillStyle = 'rgba(96, 165, 250, 0.8)';
-        ctx.font = 'bold 20px Arial';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(percent, x, y);
-        ctx.restore();
-      });
-
+      drawPercentageIndicators(ctx, canvas, window.innerHeight + 250 - offsetY, ['+45.2%', '+28.7%', '+51.9%'], time * 1.2, 'rgba(96, 165, 250, 0.8)');
+      
       // Bottom section indicators
-      const bottomPercentages = ['+67.3%', '+42.8%', '+58.1%'];
-      bottomPercentages.forEach((percent, index) => {
-        const x = (canvas.width / (bottomPercentages.length + 1)) * (index + 1);
-        const y = canvas.height * 0.8 + Math.sin(time * 0.6 + index) * 50;
-        
-        ctx.save();
-        ctx.globalAlpha = 0.7 + Math.sin(time * 2 + index) * 0.3;
-        ctx.fillStyle = 'rgba(168, 85, 247, 0.8)';
-        ctx.font = 'bold 22px Arial';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(percent, x, y);
-        ctx.restore();
-      });
+      drawPercentageIndicators(ctx, canvas, window.innerHeight * 2 + 350 - offsetY, ['+67.3%', '+42.8%', '+58.1%'], time * 0.8, 'rgba(168, 85, 247, 0.8)');
 
       // Bar charts at different positions
-      drawBarChart(ctx, canvas, time, 0.2, 6, 'rgba(74, 222, 128, 0.6)'); // Top
-      drawBarChart(ctx, canvas, time, 0.55, 5, 'rgba(96, 165, 250, 0.6)'); // Middle
-      drawBarChart(ctx, canvas, time, 0.85, 4, 'rgba(168, 85, 247, 0.6)'); // Bottom
+      drawBarChart(ctx, canvas, 250 - offsetY, time, 6, 'rgba(74, 222, 128, 0.6)');
+      drawBarChart(ctx, canvas, window.innerHeight + 350 - offsetY, time * 1.5, 5, 'rgba(96, 165, 250, 0.6)');
+      drawBarChart(ctx, canvas, window.innerHeight * 2 + 450 - offsetY, time * 0.6, 4, 'rgba(168, 85, 247, 0.6)');
     };
 
-    const drawBarChart = (ctx, canvas, time, verticalPosition, barCount, color) => {
-      const baseY = canvas.height * verticalPosition;
-      
-      for (let i = 0; i < barCount; i++) {
-        const x = 100 + i * 120;
-        const height = 50 + Math.sin(time * 1.5 + i + verticalPosition * 10) * 35;
-        const isPositive = i % 4 !== 0;
-        
-        ctx.fillStyle = isPositive ? color : 'rgba(248, 113, 113, 0.6)';
-        ctx.fillRect(x, baseY - height, 40, height);
-        
-        // Bar value
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-        ctx.font = '11px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText(`${Math.round(height)}%`, x + 20, baseY - height - 10);
+    const drawPercentageIndicators = (ctx, canvas, y, percentages, time, color) => {
+      // Only draw if visible
+      if (y > -50 && y < canvas.height + 50) {
+        percentages.forEach((percent, index) => {
+          const x = (canvas.width / (percentages.length + 1)) * (index + 1);
+          const waveY = y + Math.sin(time + index) * 30;
+          
+          ctx.save();
+          ctx.globalAlpha = 0.7 + Math.sin(time * 2 + index) * 0.3;
+          ctx.fillStyle = color;
+          ctx.font = 'bold 18px Arial';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(percent, x, waveY);
+          ctx.restore();
+        });
       }
     };
 
-    // Animation with scroll consideration
+    const drawBarChart = (ctx, canvas, y, time, barCount, color) => {
+      // Only draw if visible
+      if (y > -100 && y < canvas.height + 100) {
+        for (let i = 0; i < barCount; i++) {
+          const x = 100 + i * 120;
+          const height = 50 + Math.sin(time + i) * 35;
+          const isPositive = i % 4 !== 0;
+          
+          ctx.fillStyle = isPositive ? color : 'rgba(248, 113, 113, 0.6)';
+          ctx.fillRect(x, y - height, 40, height);
+          
+          // Bar value
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+          ctx.font = '11px Arial';
+          ctx.textAlign = 'center';
+          ctx.fillText(`${Math.round(height)}%`, x + 20, y - height - 10);
+        }
+      }
+    };
+
+    // Smooth scroll interpolation
+    const smoothScroll = () => {
+      const diff = targetScrollYRef.current - scrollYRef.current;
+      scrollYRef.current += diff * 0.1;
+      backgroundOffsetRef.current = scrollYRef.current * 0.5; // Parallax effect
+    };
+
+    // Animation
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
-      // Create vibrant finance gradient background that spans entire canvas
+      // Smooth scroll update
+      smoothScroll();
+      
+      // Create vibrant finance gradient background
       const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
       gradient.addColorStop(0, '#0f172a');
       gradient.addColorStop(0.33, '#1e293b');
@@ -424,70 +514,83 @@ const Background = () => {
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Draw enhanced grid
-      drawEnhancedGrid(ctx, canvas);
-      
-      // Draw prominent trend lines
-      drawProminentTrendLines(ctx, canvas);
-
-      // Draw interactive zones
-      drawInteractionZones(ctx);
-
-      // Update and draw particles
       const time = Date.now() * 0.001;
-      
+
+      // Draw elements with scroll offset
+      drawEnhancedGrid(ctx, canvas, backgroundOffsetRef.current);
+      drawProminentTrendLines(ctx, canvas, backgroundOffsetRef.current, time);
+      drawInteractionZones(ctx, scrollYRef.current);
+      drawProminentFinanceIndicators(ctx, canvas, backgroundOffsetRef.current, time);
+
+      // Update and draw particles with scroll consideration
       particlesRef.current.forEach((particle, index) => {
         // Pulsing effect
         particle.pulse += 0.05;
         const pulseScale = 1 + Math.sin(particle.pulse) * 0.2;
 
-        // Mouse attraction for some particles (adjusted for scroll)
+        // Adjust particle position for scroll (parallax effect)
+        const scrollFactor = particle.type === 'data' ? 0.3 : 0.7;
+        const displayY = particle.originalY - backgroundOffsetRef.current * scrollFactor;
+
+        // Mouse attraction
         if (particle.type === 'indicator' && mouseRef.current.isMoving) {
           const dx = particle.x - mouseRef.current.x;
-          const dy = particle.y - mouseRef.current.y;
+          const dy = displayY - mouseRef.current.rawY;
           const distance = Math.sqrt(dx * dx + dy * dy);
           
           if (distance < 150) {
             const force = (150 - distance) / 150;
             particle.x += (dx / distance) * force * 2;
-            particle.y += (dy / distance) * force * 2;
+            particle.originalY += (dy / distance) * force * 2;
           }
         }
 
-        // Movement
-        if (particle.type !== 'data') {
+        // Movement for non-data particles
+        if (particle.type !== 'data' && particle.type !== 'burst') {
           particle.x += particle.speedX;
-          particle.y += particle.speedY;
+          particle.originalY += particle.speedY;
 
-          // Boundary check for entire canvas
+          // Boundary check
           if (particle.x < -particle.size) particle.x = canvas.width + particle.size;
           if (particle.x > canvas.width + particle.size) particle.x = -particle.size;
-          if (particle.y < -particle.size) particle.y = canvas.height + particle.size;
-          if (particle.y > canvas.height + particle.size) particle.y = -particle.size;
+          if (particle.originalY < -particle.size) particle.originalY = canvas.height + particle.size;
+          if (particle.originalY > canvas.height + particle.size) particle.originalY = -particle.size;
+        }
+
+        // Life decay for burst particles
+        if (particle.type === 'burst') {
+          particle.life -= particle.decay;
+          if (particle.life <= 0) {
+            particlesRef.current.splice(index, 1);
+            return;
+          }
         }
 
         // Draw particle
         ctx.save();
+        if (particle.type === 'burst') {
+          ctx.globalAlpha = particle.life;
+        }
         
         if (particle.type === 'currency') {
           ctx.font = `${particle.size * 4 * pulseScale}px Arial`;
           ctx.fillStyle = particle.color;
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
-          ctx.fillText(particle.symbol, particle.x, particle.y);
+          ctx.fillText(particle.symbol, particle.x, displayY);
         } else {
           ctx.shadowColor = particle.color;
           ctx.shadowBlur = 10 * pulseScale;
           ctx.fillStyle = particle.color;
           
-          if (particle.type === 'data') {
+          if (particle.type === 'data' || particle.type === 'burst') {
             ctx.beginPath();
-            ctx.arc(particle.x, particle.y, particle.size * pulseScale, 0, Math.PI * 2);
+            ctx.arc(particle.x, displayY, particle.size * pulseScale, 0, Math.PI * 2);
             ctx.fill();
           } else {
             ctx.fillRect(
               particle.x - particle.size * pulseScale / 2,
-              particle.y - particle.size * pulseScale / 2,
+              displayY - particle.size * pulseScale / 2,
               particle.size * pulseScale,
               particle.size * pulseScale
             );
@@ -495,39 +598,18 @@ const Background = () => {
         }
         
         ctx.restore();
-
-        // Enhanced connections
-        if (particle.type === 'data') {
-          particlesRef.current.forEach((otherParticle, otherIndex) => {
-            if (index !== otherIndex && otherParticle.type === 'data') {
-              const dx = particle.x - otherParticle.x;
-              const dy = particle.y - otherParticle.y;
-              const distance = Math.sqrt(dx * dx + dy * dy);
-              
-              if (distance < 100) {
-                ctx.beginPath();
-                ctx.strokeStyle = `rgba(74, 222, 128, ${0.2 * (1 - distance / 100)})`;
-                ctx.lineWidth = 1;
-                ctx.moveTo(particle.x, particle.y);
-                ctx.lineTo(otherParticle.x, otherParticle.y);
-                ctx.stroke();
-              }
-            }
-          });
-        }
       });
 
-      // Update and draw ripples
+      // Draw click effects
       drawRipples(ctx);
-
-      // Add prominent finance indicators
-      drawProminentFinanceIndicators(ctx, canvas, time);
+      drawExplosions(ctx);
       
       animationRef.current = requestAnimationFrame(animate);
     };
 
     // Initialize
     resizeCanvas();
+    createInteractionZones();
     particlesRef.current = createParticles();
     
     // Event listeners
@@ -557,14 +639,6 @@ const Background = () => {
       <canvas 
         ref={canvasRef} 
         className="finance-background"
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '300vh', // This ensures the canvas covers the scrollable area
-          pointerEvents: 'none'
-        }}
       />
       <div className="background-overlay"></div>
     </div>
