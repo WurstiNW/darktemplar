@@ -407,6 +407,7 @@ main {
   line-height: 1.6;
   margin-bottom: 1.5rem;
   flex-grow: 1;
+  white-space: pre-line;
 }
 
 .activity-technologies {
@@ -1078,5 +1079,6 @@ section {
   opacity: 0.6;
   cursor: not-allowed;
 }
+
 
 
