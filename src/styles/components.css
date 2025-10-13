@@ -1,10 +1,9 @@
 /* Finance Background Styles */
 .background-container {
-  position: absolute; /* Changed from fixed to absolute */
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%; /* This will be overridden by the canvas height */
   z-index: -1;
   pointer-events: none;
 }
@@ -41,7 +40,7 @@ main {
   /*background: transparent;*/
   position: relative;
   z-index: 1;
-  /*min-height: 500vh; */
+  min-height: 500vh;
 }
 
 /* About Section */
@@ -1224,6 +1223,7 @@ section {
   min-height: 100vh; 
   padding: 6rem 2rem;
 }
+
 
 
 
