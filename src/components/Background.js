@@ -470,7 +470,7 @@ const Background = () => {
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
-      // Create gradient background
+      // Create gradient background that covers entire canvas
       const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
       gradient.addColorStop(0, '#0f172a');
       gradient.addColorStop(0.5, '#1e293b');
@@ -599,4 +599,5 @@ const Background = () => {
 };
 
 export default Background;
+
 
