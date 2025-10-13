@@ -50,7 +50,7 @@ export const cvData = {
     }
   ],
   skills: {
-    "Languages": [
+    "Sprachen": [
       { name: "Deutsch", percentage: 100 },
       { name: "Englisch", percentage: 80 }
     ],
@@ -60,7 +60,7 @@ export const cvData = {
       { name: "MS-Office", percentage: 90 },
       { name: "MySQL", percentage: 60 }
     ],
-    "Strengths": [
+    "Stärken": [
       { name: "Ergebnisorientiert", percentage: 100 },
       { name: "Flexibel", percentage: 100 },
       { name: "Lernbereitschaft", percentage: 100 },
@@ -155,6 +155,7 @@ export const cvData = {
     }
   ]
 };
+
 
 
 
