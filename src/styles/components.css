@@ -1083,6 +1083,89 @@ section {
   cursor: not-allowed;
 }
 
+/* Floating Tags Container */
+.floating-tags-container {
+  position: relative;
+  width: 400px;
+  height: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Individual Floating Tech Tags */
+.floating-tech-tag {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  color: var(--text-primary);
+  padding: 0.75rem 1.25rem;
+  border-radius: 50px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  animation: float-tag 6s ease-in-out infinite;
+  white-space: nowrap;
+  z-index: 1;
+}
+
+/* Floating animation for tags */
+@keyframes float-tag {
+  0%, 100% { 
+    transform: translate(0, 0) rotate(0deg) scale(1);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+  25% { 
+    transform: translate(-10px, -15px) rotate(-2deg) scale(1.05);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+  }
+  50% { 
+    transform: translate(5px, -20px) rotate(2deg) scale(1.02);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+  }
+  75% { 
+    transform: translate(-5px, -10px) rotate(-1deg) scale(1.03);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
+  }
+}
+
+/* Individual tag animations for variety */
+.floating-tech-tag:nth-child(odd) {
+  animation: float-tag 7s ease-in-out infinite;
+}
+
+.floating-tech-tag:nth-child(even) {
+  animation: float-tag 8s ease-in-out infinite reverse;
+}
+
+.floating-tech-tag:nth-child(3n) {
+  animation: float-tag 9s ease-in-out infinite;
+}
+
+/* Hover effects */
+.floating-tech-tag:hover {
+  transform: scale(1.1) !important;
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 15px 40px rgba(99, 102, 241, 0.3);
+  z-index: 2;
+  transition: all 0.3s ease;
+}
+
+/* Alternative: Minimal transparent version */
+.floating-tech-tag.minimal {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.floating-tech-tag.minimal:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
 
 
 
