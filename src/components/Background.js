@@ -17,9 +17,20 @@ const Background = () => {
     
     // Set canvas size to be the full scrollable height
     const resizeCanvas = () => {
-      const totalHeight = document.documentElement.scrollHeight;
+      // Get the full document height
+      const body = document.body;
+      const html = document.documentElement;
+      const totalHeight = Math.max(
+        body.scrollHeight, 
+        body.offsetHeight, 
+        html.clientHeight, 
+        html.scrollHeight, 
+        html.offsetHeight
+      );
+      
       canvas.width = window.innerWidth;
       canvas.height = totalHeight;
+      console.log('Canvas resized to:', canvas.width, 'x', canvas.height);
       createInteractionZones();
     };
     
@@ -31,8 +42,10 @@ const Background = () => {
     // Create interactive zones at different scroll positions
     const createInteractionZones = () => {
       const totalHeight = canvas.height;
+      console.log('Creating zones for height:', totalHeight);
+      
       interactionZonesRef.current = [
-        // Top section
+        // Top section (visible at start)
         {
           x: canvas.width * 0.2,
           y: 300,
@@ -49,10 +62,10 @@ const Background = () => {
           type: 'metrics',
           hover: false
         },
-        // Middle section
+        // Middle section (around 1000px scroll)
         {
           x: canvas.width * 0.1,
-          y: totalHeight * 0.3,
+          y: 1200,
           width: 220,
           height: 100,
           type: 'analytics',
@@ -60,16 +73,16 @@ const Background = () => {
         },
         {
           x: canvas.width * 0.6,
-          y: totalHeight * 0.4,
+          y: 1500,
           width: 200,
           height: 120,
           type: 'performance',
           hover: false
         },
-        // Bottom section
+        // Bottom section (around 2500px scroll)
         {
           x: canvas.width * 0.3,
-          y: totalHeight * 0.7,
+          y: 2500,
           width: 180,
           height: 100,
           type: 'revenue',
@@ -77,7 +90,7 @@ const Background = () => {
         },
         {
           x: canvas.width * 0.7,
-          y: totalHeight * 0.8,
+          y: 2800,
           width: 200,
           height: 120,
           type: 'growth',
@@ -89,12 +102,13 @@ const Background = () => {
     // Create finance-themed particles distributed throughout the canvas
     const createParticles = () => {
       const particles = [];
-      const particleCount = 200;
+      const particleCount = 150;
       
       for (let i = 0; i < particleCount; i++) {
         const type = Math.random();
         let particleConfig;
         
+        // Distribute particles throughout the entire canvas height
         const particleY = Math.random() * canvas.height;
         
         if (type < 0.4) {
@@ -140,12 +154,13 @@ const Background = () => {
 
     // Mouse interactions
     const handleMouseMove = (event) => {
-      const absoluteY = event.clientY + scrollYRef.current;
+      const viewportY = event.clientY;
+      const absoluteY = viewportY + scrollYRef.current;
       
       mouseRef.current = {
         x: event.clientX,
         y: absoluteY,
-        viewportY: event.clientY,
+        viewportY: viewportY,
         isMoving: true
       };
 
@@ -154,8 +169,8 @@ const Background = () => {
         const isHovering = 
           event.clientX > zone.x && 
           event.clientX < zone.x + zone.width &&
-          event.clientY > zoneViewportY && 
-          event.clientY < zoneViewportY + zone.height;
+          viewportY > zoneViewportY && 
+          viewportY < zoneViewportY + zone.height;
         
         zone.hover = isHovering;
       });
@@ -203,9 +218,9 @@ const Background = () => {
       ctx.beginPath();
       ctx.strokeStyle = 'rgba(96, 165, 250, 0.25)';
       ctx.lineWidth = 2;
-      ctx.moveTo(-30, canvas.height * 0.4);
+      ctx.moveTo(-30, 1200);
       for (let x = 0; x < canvas.width + 30; x += 12) {
-        const y = canvas.height * 0.4 + Math.cos(x * 0.01 + time * 1.2) * 80;
+        const y = 1200 + Math.cos(x * 0.01 + time * 1.2) * 80;
         ctx.lineTo(x, y);
       }
       ctx.stroke();
@@ -213,9 +228,9 @@ const Background = () => {
       ctx.beginPath();
       ctx.strokeStyle = 'rgba(168, 85, 247, 0.25)';
       ctx.lineWidth = 2;
-      ctx.moveTo(-20, canvas.height * 0.7);
+      ctx.moveTo(-20, 2500);
       for (let x = 0; x < canvas.width + 20; x += 10) {
-        const y = canvas.height * 0.7 + Math.sin(x * 0.015 + time * 0.8) * 60;
+        const y = 2500 + Math.sin(x * 0.015 + time * 0.8) * 60;
         ctx.lineTo(x, y);
       }
       ctx.stroke();
@@ -225,6 +240,7 @@ const Background = () => {
       interactionZonesRef.current.forEach(zone => {
         const zoneViewportY = zone.y - scrollYRef.current;
         
+        // Only draw if zone is visible in viewport
         if (zoneViewportY > -zone.height && zoneViewportY < window.innerHeight) {
           ctx.save();
           
@@ -272,10 +288,10 @@ const Background = () => {
       const indicators = [
         { text: '+24.8%', y: 150, color: 'rgba(74, 222, 128, 0.8)' },
         { text: '+18.3%', y: 400, color: 'rgba(96, 165, 250, 0.8)' },
-        { text: '+32.1%', y: canvas.height * 0.3, color: 'rgba(168, 85, 247, 0.8)' },
-        { text: '+45.2%', y: canvas.height * 0.5, color: 'rgba(245, 158, 11, 0.8)' },
-        { text: '+28.7%', y: canvas.height * 0.7, color: 'rgba(34, 197, 94, 0.8)' },
-        { text: '+51.9%', y: canvas.height * 0.9, color: 'rgba(139, 92, 246, 0.8)' }
+        { text: '+32.1%', y: 1300, color: 'rgba(168, 85, 247, 0.8)' },
+        { text: '+45.2%', y: 1600, color: 'rgba(245, 158, 11, 0.8)' },
+        { text: '+28.7%', y: 2600, color: 'rgba(34, 197, 94, 0.8)' },
+        { text: '+51.9%', y: 2900, color: 'rgba(139, 92, 246, 0.8)' }
       ];
 
       indicators.forEach((indicator, index) => {
@@ -295,9 +311,8 @@ const Background = () => {
       // Bar charts at different positions
       const barCharts = [
         { y: 250, count: 6, color: 'rgba(74, 222, 128, 0.6)' },
-        { y: canvas.height * 0.35, count: 5, color: 'rgba(96, 165, 250, 0.6)' },
-        { y: canvas.height * 0.6, count: 4, color: 'rgba(168, 85, 247, 0.6)' },
-        { y: canvas.height * 0.85, count: 6, color: 'rgba(245, 158, 11, 0.6)' }
+        { y: 1400, count: 5, color: 'rgba(96, 165, 250, 0.6)' },
+        { y: 2700, count: 4, color: 'rgba(168, 85, 247, 0.6)' }
       ];
 
       barCharts.forEach((chart, chartIndex) => {
@@ -321,11 +336,12 @@ const Background = () => {
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
-      // Create gradient background
+      // Create gradient background that spans entire canvas
       const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
       gradient.addColorStop(0, '#0f172a');
-      gradient.addColorStop(0.5, '#1e293b');
-      gradient.addColorStop(1, '#334155');
+      gradient.addColorStop(0.3, '#1e293b');
+      gradient.addColorStop(0.7, '#334155');
+      gradient.addColorStop(1, '#475569');
       
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -359,6 +375,7 @@ const Background = () => {
           particle.x += particle.speedX;
           particle.y += particle.speedY;
 
+          // Boundary check for entire canvas
           if (particle.x < -particle.size) particle.x = canvas.width + particle.size;
           if (particle.x > canvas.width + particle.size) particle.x = -particle.size;
           if (particle.y < -particle.size) particle.y = canvas.height + particle.size;
@@ -398,17 +415,22 @@ const Background = () => {
       animationRef.current = requestAnimationFrame(animate);
     };
 
-    // Initialize
-    resizeCanvas();
-    particlesRef.current = createParticles();
-    
-    // Event listeners
-    window.addEventListener('resize', resizeCanvas);
-    window.addEventListener('scroll', handleScroll);
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseleave', handleMouseLeave);
+    // Initialize with a small delay to ensure DOM is ready
+    const init = () => {
+      resizeCanvas();
+      particlesRef.current = createParticles();
+      
+      // Event listeners
+      window.addEventListener('resize', resizeCanvas);
+      window.addEventListener('scroll', handleScroll);
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseleave', handleMouseLeave);
 
-    animate();
+      animate();
+    };
+
+    // Wait a bit for the DOM to be fully ready
+    setTimeout(init, 100);
 
     // Cleanup
     return () => {
