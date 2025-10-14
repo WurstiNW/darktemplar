@@ -9,40 +9,38 @@ const About = () => {
         <h2>
           <FaUser className="section-icon" /> Über mich
         </h2>
-        <div className="about-grid">
-          <div className="about-content">
-            <div className="about-text">
-              <p>{cvData.about}</p>
-            </div>
-            <div className="personal-info">
-              <div className="info-grid">
-                <div className="info-item">
-                  <FaMapMarkerAlt className="info-icon" />
-                  <div>
-                    <span className="info-label">Adresse</span>
-                    <span className="info-value">{cvData.personal.location}</span>
-                  </div>
+        <div className="about-content-full">
+          <div className="about-text-full">
+            <p>{cvData.about}</p>
+          </div>
+          <div className="personal-info-full">
+            <div className="info-grid-full">
+              <div className="info-item">
+                <FaMapMarkerAlt className="info-icon" />
+                <div>
+                  <span className="info-label">Adresse</span>
+                  <span className="info-value">{cvData.personal.location}</span>
                 </div>
-                <div className="info-item">
-                  <FaPhone className="info-icon" />
-                  <div>
-                    <span className="info-label">Telefon</span>
-                    <span className="info-value">{cvData.personal.phone}</span>
-                  </div>
+              </div>
+              <div className="info-item">
+                <FaPhone className="info-icon" />
+                <div>
+                  <span className="info-label">Telefon</span>
+                  <span className="info-value">{cvData.personal.phone}</span>
                 </div>
-                <div className="info-item">
-                  <FaEnvelope className="info-icon" />
-                  <div>
-                    <span className="info-label">E-Mail</span>
-                    <span className="info-value">{cvData.personal.email}</span>
-                  </div>
+              </div>
+              <div className="info-item">
+                <FaEnvelope className="info-icon" />
+                <div>
+                  <span className="info-label">E-Mail</span>
+                  <span className="info-value">{cvData.personal.email}</span>
                 </div>
-                <div className="info-item">
-                  <FaGlobe className="info-icon" />
-                  <div>
-                    <span className="info-label">Website</span>
-                    <span className="info-value">{cvData.personal.website}</span>
-                  </div>
+              </div>
+              <div className="info-item">
+                <FaGlobe className="info-icon" />
+                <div>
+                  <span className="info-label">Website</span>
+                  <span className="info-value">{cvData.personal.website}</span>
                 </div>
               </div>
             </div>
