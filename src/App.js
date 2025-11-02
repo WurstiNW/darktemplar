@@ -8,7 +8,6 @@ import Experience from './components/Experience';
 import Education from './components/Education'; 
 import Skills from './components/Skills';
 import VoluntaryActivities from './components/VoluntaryActivities';
-import Contact from './components/Contact';
 
 function App() {
   return (
@@ -28,4 +27,5 @@ function App() {
 }
 
 export default App;
+
 
