@@ -7,7 +7,7 @@ const Hero = () => {
     window.open('/cv.pdf', '_blank');
   };
 
-  // Get skills from specific categories without overlapping
+  // Get skills
   const getNonOverlappingSkills = () => {
     const categories = ['Sprachen', 'Stärken', 'IT'];
     const allSkills = [];
@@ -104,6 +104,7 @@ const Hero = () => {
 };
 
 export default Hero;
+
 
 
 
