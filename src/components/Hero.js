@@ -33,20 +33,20 @@ const Hero = () => {
   // Predefined positions to prevent overlapping
   const positions = [
     // Top row
-    { left: '5%', top: '35%' },    // Far left - aligns with last name
+    { left: '5%', top: '35%' },    // Far left
     { left: '25%', top: '32%' },   // Left middle
     { left: '45%', top: '35%' },   // Center left
     { left: '65%', top: '32%' },   // Center right
     { left: '85%', top: '35%' },   // Far right
     
-    // Middle row - lowered accordingly
+    // Middle row 
     { left: '10%', top: '55%' },   // Left
     { left: '30%', top: '58%' },   // Left middle
     { left: '50%', top: '55%' },   // Center
     { left: '70%', top: '58%' },   // Right middle
     { left: '90%', top: '55%' },   // Right
     
-    // Bottom row - lowered accordingly
+    // Bottom row 
     { left: '5%', top: '75%' },    // Far left
     { left: '25%', top: '78%' },   // Left middle
     { left: '45%', top: '75%' },   // Center left
@@ -61,7 +61,6 @@ const Hero = () => {
           <h1 className="hero-title">
             <span className="title-name">{cvData.personal.name}</span>
           </h1>
-          <h2 className="hero-subtitle">{cvData.personal.title}</h2>
           <p className="hero-description">
             {cvData.about}
           </p>
@@ -105,6 +104,7 @@ const Hero = () => {
 };
 
 export default Hero;
+
 
 
 
